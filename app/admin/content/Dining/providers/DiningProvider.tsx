@@ -8,6 +8,8 @@ interface DiningContextType {
     isAddModalOpen: boolean;
     setIsAddModalOpen: (isOpen: boolean) => void;
     diningData: any[];
+    editingData: any | null;
+    setEditingData: (data: any | null) => void;
 }
 
 const DiningContext = createContext<DiningContextType | undefined>(undefined);
@@ -16,6 +18,7 @@ export function DiningProvider({ children, initialData }: { children: React.Reac
     const [searchTerm, setSearchTerm] = useState("");
     const [isAddModalOpen, setIsAddModalOpen] = useState(false);
     const [diningData, setDiningData] = useState(initialData);
+    const [editingData, setEditingData] = useState<any | null>(null);
 
     // Whenever initialData from server changes, you might want to sync, 
     // but for simple cases we just use it directly or let the server action revalidate the page.
@@ -24,7 +27,7 @@ export function DiningProvider({ children, initialData }: { children: React.Reac
     }, [initialData]);
 
     return (
-        <DiningContext.Provider value={{ searchTerm, setSearchTerm, isAddModalOpen, setIsAddModalOpen, diningData }}>
+        <DiningContext.Provider value={{ searchTerm, setSearchTerm, isAddModalOpen, setIsAddModalOpen, diningData, editingData, setEditingData }}>
             {children}
         </DiningContext.Provider>
     );

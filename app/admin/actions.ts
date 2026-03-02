@@ -2,22 +2,42 @@
 
 import prisma from "@/lib/db/prisma";
 import { revalidatePath } from "next/cache";
+import { writeFile } from "fs/promises";
+import path from "path";
 
-export async function addDining(data: any) {
+async function processImageUpload(formData: FormData): Promise<string | null> {
+    const file = formData.get("imageFile") as File | null;
+    let imageUrl = formData.get("imageUrl") as string | null;
+
+    if (file && file.size > 0 && file.name !== "undefined") {
+        const buffer = Buffer.from(await file.arrayBuffer());
+        const filename = Date.now() + "_" + file.name.replaceAll(" ", "_");
+        const filepath = path.join(process.cwd(), "public/uploads", filename);
+        await writeFile(filepath, buffer);
+        imageUrl = `/uploads/${filename}`;
+    }
+
+    // Return the new image URL, or the existing one if no new file was uploaded
+    return imageUrl || null;
+}
+
+export async function addDining(formData: FormData) {
     try {
+        const imageUrl = await processImageUpload(formData);
+
         const newDining = await prisma.dining.create({
             data: {
-                name: data.name,
-                description: data.description,
-                address: data.address,
-                cuisineType: data.cuisineType,
-                openingHours: data.openingHours,
-                contactNumber: data.contactNumber,
-                facebookUrl: data.facebookUrl,
-                imageUrl: data.imageUrl,
-                latitude: data.latitude ? parseFloat(data.latitude) : null,
-                longitude: data.longitude ? parseFloat(data.longitude) : null,
-                googleMapsUrl: data.googleMapsUrl,
+                name: formData.get("name") as string,
+                description: formData.get("description") as string,
+                address: formData.get("address") as string,
+                cuisineType: formData.get("cuisineType") as string,
+                openingHours: formData.get("openingHours") as string,
+                contactNumber: formData.get("contactNumber") as string,
+                facebookUrl: formData.get("facebookUrl") as string,
+                imageUrl: imageUrl,
+                latitude: formData.get("latitude") ? parseFloat(formData.get("latitude") as string) : null,
+                longitude: formData.get("longitude") ? parseFloat(formData.get("longitude") as string) : null,
+                googleMapsUrl: formData.get("googleMapsUrl") as string,
                 isPublished: true,
             },
         });
@@ -27,5 +47,61 @@ export async function addDining(data: any) {
     } catch (error) {
         console.error("Failed to add dining:", error);
         return { success: false, error: "Failed to create dining entry." };
+    }
+}
+
+export async function deleteDining(id: string) {
+    try {
+        await prisma.dining.delete({
+            where: { id }
+        });
+        revalidatePath("/admin/dining");
+        return { success: true };
+    } catch (error) {
+        console.error("Failed to delete dining:", error);
+        return { success: false, error: "Failed to delete dining entry." };
+    }
+}
+
+export async function updateDining(id: string, formData: FormData) {
+    try {
+        const imageUrl = await processImageUpload(formData);
+
+        const updatedDining = await prisma.dining.update({
+            where: { id },
+            data: {
+                name: formData.get("name") as string,
+                description: formData.get("description") as string,
+                address: formData.get("address") as string,
+                cuisineType: formData.get("cuisineType") as string,
+                openingHours: formData.get("openingHours") as string,
+                contactNumber: formData.get("contactNumber") as string,
+                facebookUrl: formData.get("facebookUrl") as string,
+                imageUrl: imageUrl,
+                latitude: formData.get("latitude") ? parseFloat(formData.get("latitude") as string) : null,
+                longitude: formData.get("longitude") ? parseFloat(formData.get("longitude") as string) : null,
+                googleMapsUrl: formData.get("googleMapsUrl") as string,
+            },
+        });
+
+        revalidatePath("/admin/dining");
+        return { success: true, dining: updatedDining };
+    } catch (error) {
+        console.error("Failed to update dining:", error);
+        return { success: false, error: "Failed to update dining entry." };
+    }
+}
+
+export async function toggleDiningStatus(id: string, isPublished: boolean) {
+    try {
+        await prisma.dining.update({
+            where: { id },
+            data: { isPublished }
+        });
+        revalidatePath("/admin/dining");
+        return { success: true };
+    } catch (error) {
+        console.error("Failed to update status:", error);
+        return { success: false, error: "Failed to update dining status." };
     }
 }

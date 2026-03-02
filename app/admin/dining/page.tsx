@@ -2,7 +2,7 @@ import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import { redirect } from "next/navigation";
 import prisma from "@/lib/db/prisma";
-import DiningClient from "@/components/admin/DiningClient";
+import DiningPageWrapper from "@/app/admin/content/Dining/DiningPage";
 
 export const dynamic = "force-dynamic";
 
@@ -17,5 +17,5 @@ export default async function DiningPage() {
         orderBy: { createdAt: "desc" }
     });
 
-    return <DiningClient diningData={diningData} />;
+    return <DiningPageWrapper diningData={diningData} />;
 }
