@@ -66,3 +66,50 @@ model VerificationToken {
 
   @@unique([identifier, token])
 }
+
+// ----------------------------------------
+// LOCAL TOURISM MODULES
+// ----------------------------------------
+
+model Dining {
+  id            String   @id @default(cuid())
+  name          String
+  description   String?  @db.Text
+  address       String
+  cuisineType   String?
+  openingHours  String?
+  contactNumber String?
+  facebookUrl   String?
+  imageUrl      String?
+  
+  // Location Tracking
+  latitude      Float?
+  longitude     Float?
+  googleMapsUrl String?  @db.Text
+
+  isPublished   Boolean  @default(true)
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+}
+
+model Accommodation {
+  id            String   @id @default(cuid())
+  name          String
+  description   String?  @db.Text
+  address       String
+  type          String   // e.g. Resort, Hotel, Homestay
+  priceRange    String?
+  amenities     String?  @db.Text
+  contactNumber String?
+  websiteUrl    String?
+  imageUrl      String?
+
+  // Location Tracking
+  latitude      Float?
+  longitude     Float?
+  googleMapsUrl String?  @db.Text
+
+  isPublished   Boolean  @default(true)
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+}
