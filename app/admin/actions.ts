@@ -105,3 +105,95 @@ export async function toggleDiningStatus(id: string, isPublished: boolean) {
         return { success: false, error: "Failed to update dining status." };
     }
 }
+
+// ----------------------------------------
+// ACCOMMODATION (TULUYAN) ACTIONS
+// ----------------------------------------
+
+export async function addAccommodation(formData: FormData) {
+    try {
+        const imageUrl = await processImageUpload(formData);
+
+        const newAccommodation = await prisma.accommodation.create({
+            data: {
+                name: formData.get("name") as string,
+                description: formData.get("description") as string,
+                address: formData.get("address") as string,
+                type: formData.get("type") as string,
+                priceRange: formData.get("priceRange") as string,
+                amenities: formData.get("amenities") as string,
+                contactNumber: formData.get("contactNumber") as string,
+                websiteUrl: formData.get("websiteUrl") as string,
+                imageUrl: imageUrl,
+                latitude: formData.get("latitude") ? parseFloat(formData.get("latitude") as string) : null,
+                longitude: formData.get("longitude") ? parseFloat(formData.get("longitude") as string) : null,
+                googleMapsUrl: formData.get("googleMapsUrl") as string,
+                isPublished: true,
+            },
+        });
+
+        revalidatePath("/admin/accommodation");
+        return { success: true, accommodation: newAccommodation };
+    } catch (error) {
+        console.error("Failed to add accommodation:", error);
+        return { success: false, error: "Failed to create accommodation entry." };
+    }
+}
+
+export async function deleteAccommodation(id: string) {
+    try {
+        await prisma.accommodation.delete({
+            where: { id }
+        });
+        revalidatePath("/admin/accommodation");
+        return { success: true };
+    } catch (error) {
+        console.error("Failed to delete accommodation:", error);
+        return { success: false, error: "Failed to delete accommodation entry." };
+    }
+}
+
+export async function updateAccommodation(id: string, formData: FormData) {
+    try {
+        const imageUrl = await processImageUpload(formData);
+
+        const updatedAccommodation = await prisma.accommodation.update({
+            where: { id },
+            data: {
+                name: formData.get("name") as string,
+                description: formData.get("description") as string,
+                address: formData.get("address") as string,
+                type: formData.get("type") as string,
+                priceRange: formData.get("priceRange") as string,
+                amenities: formData.get("amenities") as string,
+                contactNumber: formData.get("contactNumber") as string,
+                websiteUrl: formData.get("websiteUrl") as string,
+                imageUrl: imageUrl,
+                latitude: formData.get("latitude") ? parseFloat(formData.get("latitude") as string) : null,
+                longitude: formData.get("longitude") ? parseFloat(formData.get("longitude") as string) : null,
+                googleMapsUrl: formData.get("googleMapsUrl") as string,
+            },
+        });
+
+        revalidatePath("/admin/accommodation");
+        return { success: true, accommodation: updatedAccommodation };
+    } catch (error) {
+        console.error("Failed to update accommodation:", error);
+        return { success: false, error: "Failed to update accommodation entry." };
+    }
+}
+
+export async function toggleAccommodationStatus(id: string, isPublished: boolean) {
+    try {
+        await prisma.accommodation.update({
+            where: { id },
+            data: { isPublished }
+        });
+        revalidatePath("/admin/accommodation");
+        return { success: true };
+    } catch (error) {
+        console.error("Failed to update status:", error);
+        return { success: false, error: "Failed to update accommodation status." };
+    }
+}
+
