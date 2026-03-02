@@ -1,0 +1,50 @@
+prisma:cli:bin Failed to initialize the command state: Error: Invalid command state schema +1204ms
+prisma:config:defineConfig [default]: '{\n  "loadedFromFile": null\n}' +747ms
+prisma:config:defineConfig [config.schema]: 'prisma/schema.prisma' +1ms
+prisma:config:defineConfig [config.datasource]: '{\n' +
+  '  "url": "mysql://WmSk2xEwFA7sk9q.root:l3NykPXKFqLwzHYi@gateway01.ap-southeast-1.prod.aws.tidbcloud.com:4000/fortune500?ssl={\\"rejectUnauthorized\\":true}"\n' +
+  '}' +0ms
+prisma:config:loadConfigFromFile Config file loaded in 115.15ms +1ms
+prisma:config:PrismaConfig Parsing PrismaConfigInternal: '{\n' +
+  '  "loadedFromFile": null,\n' +
+  '  "schema": "prisma/schema.prisma",\n' +
+  '  "datasource": {\n' +
+  '    "url": "mysql://WmSk2xEwFA7sk9q.root:l3NykPXKFqLwzHYi@gateway01.ap-southeast-1.prod.aws.tidbcloud.com:4000/fortune500?ssl={\\"rejectUnauthorized\\":true}"\n' +
+  '  }\n' +
+  '}' +1ms
+prisma:config:PrismaConfig Short-circuit: input is already a PrismaConfigInternal object +8ms
+Loaded Prisma config from prisma.config.ts.
+
+prisma:engines binaries to download schema-engine +1325ms
+prisma:getSchema Reading schema from single file C:\Website Project\agno-portal\prisma\schema.prisma +130ms
+prisma:getSchema Reading schema from single file C:\Website Project\agno-portal\prisma\schema.prisma +0ms
+prisma:getConfig Using getConfig Wasm +20ms
+prisma:cli:checkpoint Error from tryToReadDataFromSchema() while processing the schema. This is not a fatal error. It will continue without the processed data. +24ms
+prisma:cli:checkpoint {
+  "name": "GetConfigError"
+} +1ms
+prisma:cli:checkpoint runCheckpointClientCheck(): Execution time for getting info: 47.832800000000134 ms +0ms
+prisma:getSchema Reading schema from single file C:\Website Project\agno-portal\prisma\schema.prisma +9ms
+Prisma schema loaded from prisma\schema.prisma.
+prisma:getConfig Using getConfig Wasm +11ms
+Error: GetConfigError: Prisma schema validation - (get-config wasm)
+Error code: P1012
+error: Error validating: This line is invalid. It does not start with any known Prisma schema keyword.
+  -->  prisma\schema.prisma:1
+   | 
+   | 
+ 1 | ﻿// This is your Prisma schema file,
+ 2 | // learn more about it in the docs: https://pris.ly/d/prisma-schema
+   | 
+
+Validation Error Count: 1
+[Context: getConfig]
+
+Prisma CLI Version : 7.4.2
+    at C:\Website Project\agno-portal\node_modules\prisma\build\index.js:203:1073
+    at e.with (C:\Website Project\agno-portal\node_modules\prisma\build\index.js:163:41041)
+    at Cy (C:\Website Project\agno-portal\node_modules\prisma\build\index.js:203:1043)
+    at oD (C:\Website Project\agno-portal\node_modules\prisma\build\index.js:222:1318)
+    at e.parse (C:\Website Project\agno-portal\node_modules\prisma\build\index.js:4094:530)
+    at async e.parse (C:\Website Project\agno-portal\node_modules\prisma\build\index.js:1060:2319)
+    at async qir (C:\Website Project\agno-portal\node_modules\prisma\build\index.js:4931:136)

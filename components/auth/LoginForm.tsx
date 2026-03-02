@@ -1,6 +1,8 @@
 "use client";
 
 import * as React from "react";
+import { signIn } from "next-auth/react";
+import { useRouter } from "next/navigation";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
@@ -24,6 +26,8 @@ type LoginFormValues = z.infer<typeof loginSchema>;
 
 export function LoginForm() {
     const [showPassword, setShowPassword] = React.useState(false);
+    const [isLoading, setIsLoading] = React.useState(false); // Added state
+    const router = useRouter(); // Added router
 
     const form = useForm<LoginFormValues>({
         resolver: zodResolver(loginSchema),
@@ -34,9 +38,40 @@ export function LoginForm() {
         },
     });
 
-    const onSubmit = (data: LoginFormValues) => {
-        console.log("Login form data:", data);
-        // Handle auth here
+    const onSubmit = async (data: LoginFormValues) => { // Changed to async and type
+        setIsLoading(true);
+        try {
+            const result = await signIn("credentials", {
+                email: data.email,
+                password: data.password,
+                redirect: false,
+            });
+
+            if (result?.error) {
+                console.error("Login failed:", result.error);
+                // In a real app, you'd show a toast here
+            } else {
+                // Fetch the session to get the role
+                const response = await fetch("/api/auth/session");
+                const session = await response.json();
+
+                if (session && session.user) {
+                    const role = session.user.role;
+                    if (role === "ADMIN") {
+                        router.push("/admin/dashboard");
+                    } else {
+                        router.push("/user/dashboard");
+                    }
+                } else {
+                    // Fallback if session user info is missing
+                    router.push("/user/dashboard");
+                }
+            }
+        } catch (error) {
+            console.error("An unexpected error occurred:", error);
+        } finally {
+            setIsLoading(false);
+        }
     };
 
     return (

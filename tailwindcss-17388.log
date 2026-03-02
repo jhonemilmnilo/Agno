@@ -1,0 +1,76 @@
+2026-02-28T09:42:14.853303Z  INFO tailwindcss_oxide::scanner: Provided sources:
+2026-02-28T09:42:14.854104Z  INFO tailwindcss_oxide::scanner: Source: PublicSourceEntry { base: "C:\\Website Project\\agno-portal", pattern: "**/*", negated: false }
+2026-02-28T09:42:14.855244Z  INFO tailwindcss_oxide::scanner: Optimized sources:
+2026-02-28T09:42:14.855279Z  INFO tailwindcss_oxide::scanner: Source: Auto { base: "C:\\Website Project\\agno-portal" }
+2026-02-28T09:42:14.858113Z  INFO discover_sources: tailwindcss_oxide::scanner: enter
+2026-02-28T09:42:14.858195Z  INFO discover_sources:walk_synchronous: tailwindcss_oxide::scanner: enter
+2026-02-28T09:42:14.869913Z  INFO discover_sources:walk_synchronous: tailwindcss_oxide::scanner: exit
+2026-02-28T09:42:14.870611Z  INFO tailwindcss_oxide::scanner: Reading "C:\\Website Project\\agno-portal\\ .env.example"
+2026-02-28T09:42:14.870648Z  INFO tailwindcss_oxide::scanner: Reading "C:\\Website Project\\agno-portal\\debug4.txt"
+2026-02-28T09:42:14.870721Z  INFO tailwindcss_oxide::scanner: Reading "C:\\Website Project\\agno-portal\\components\\shared\\Providers.tsx"
+2026-02-28T09:42:14.870787Z  INFO tailwindcss_oxide::scanner: Reading "C:\\Website Project\\agno-portal\\components\\ui\\select.tsx"
+2026-02-28T09:42:14.870838Z  INFO tailwindcss_oxide::scanner: Reading "C:\\Website Project\\agno-portal\\debug_info.txt"
+2026-02-28T09:42:14.870847Z  INFO tailwindcss_oxide::scanner: Reading "C:\\Website Project\\agno-portal\\app\\admin\\dashboard\\page.tsx"
+2026-02-28T09:42:14.870907Z  INFO tailwindcss_oxide::scanner: Reading "C:\\Website Project\\agno-portal\\components\\ui\\button.tsx"
+2026-02-28T09:42:14.870963Z  INFO tailwindcss_oxide::scanner: Reading "C:\\Website Project\\agno-portal\\components\\ui\\separator.tsx"
+2026-02-28T09:42:14.870960Z  INFO tailwindcss_oxide::scanner: Reading "C:\\Website Project\\agno-portal\\prisma\\schema.prisma"
+2026-02-28T09:42:14.871027Z  INFO tailwindcss_oxide::scanner: Reading "C:\\Website Project\\agno-portal\\app\\api\\auth\\[...nextauth]\\route.ts"
+2026-02-28T09:42:14.871044Z  INFO tailwindcss_oxide::scanner: Reading "C:\\Website Project\\agno-portal\\eslint.config.mjs"
+2026-02-28T09:42:14.871065Z  INFO tailwindcss_oxide::scanner: Reading "C:\\Website Project\\agno-portal\\components\\ui\\card.tsx"
+2026-02-28T09:42:14.871061Z  INFO tailwindcss_oxide::scanner: Reading "C:\\Website Project\\agno-portal\\app\\layout.tsx"
+2026-02-28T09:42:14.871097Z  INFO tailwindcss_oxide::scanner: Reading "C:\\Website Project\\agno-portal\\components\\ui\\checkbox.tsx"
+2026-02-28T09:42:14.871129Z  INFO tailwindcss_oxide::scanner: Reading "C:\\Website Project\\agno-portal\\prisma.config.ts"
+2026-02-28T09:42:14.871135Z  INFO tailwindcss_oxide::scanner: Reading "C:\\Website Project\\agno-portal\\components\\ui\\tabs.tsx"
+2026-02-28T09:42:14.871225Z  INFO tailwindcss_oxide::scanner: Reading "C:\\Website Project\\agno-portal\\components\\ui\\input.tsx"
+2026-02-28T09:42:14.871239Z  INFO tailwindcss_oxide::scanner: Reading "C:\\Website Project\\agno-portal\\app\\auth\\login\\page.tsx"
+2026-02-28T09:42:14.871260Z  INFO tailwindcss_oxide::scanner: Reading "C:\\Website Project\\agno-portal\\components.json"
+2026-02-28T09:42:14.871256Z  INFO tailwindcss_oxide::scanner: Reading "C:\\Website Project\\agno-portal\\components\\auth\\LoginForm.tsx"
+2026-02-28T09:42:14.871269Z  INFO tailwindcss_oxide::scanner: Reading "C:\\Website Project\\agno-portal\\prisma_gen_output.txt"
+2026-02-28T09:42:14.871275Z  INFO tailwindcss_oxide::scanner: Reading "C:\\Website Project\\agno-portal\\lib\\auth.ts"
+2026-02-28T09:42:14.871279Z  INFO tailwindcss_oxide::scanner: Reading "C:\\Website Project\\agno-portal\\app\\auth\\signup\\page.tsx"
+2026-02-28T09:42:14.871322Z  INFO tailwindcss_oxide::scanner: Reading "C:\\Website Project\\agno-portal\\app\\page.tsx"
+2026-02-28T09:42:14.871359Z  INFO tailwindcss_oxide::scanner: Reading "C:\\Website Project\\agno-portal\\components\\ui\\label.tsx"
+2026-02-28T09:42:14.871351Z  INFO tailwindcss_oxide::scanner: Reading "C:\\Website Project\\agno-portal\\components\\auth\\SignupForm.tsx"
+2026-02-28T09:42:14.871392Z  INFO tailwindcss_oxide::scanner: Reading "C:\\Website Project\\agno-portal\\debug2.txt"
+2026-02-28T09:42:14.871517Z  INFO tailwindcss_oxide::scanner: Reading "C:\\Website Project\\agno-portal\\app\\user\\dashboard\\page.tsx"
+2026-02-28T09:42:14.871531Z  INFO tailwindcss_oxide::scanner: Reading "C:\\Website Project\\agno-portal\\lint_output.txt"
+2026-02-28T09:42:14.871408Z  INFO tailwindcss_oxide::scanner: Reading "C:\\Website Project\\agno-portal\\components\\shared\\AuthLayout.tsx"
+2026-02-28T09:42:14.871439Z  INFO tailwindcss_oxide::scanner: Reading "C:\\Website Project\\agno-portal\\public\\file.svg"
+2026-02-28T09:42:14.871467Z  INFO tailwindcss_oxide::scanner: Reading "C:\\Website Project\\agno-portal\\lib\\utils.ts"
+2026-02-28T09:42:14.871544Z  INFO tailwindcss_oxide::scanner: Reading "C:\\Website Project\\agno-portal\\output.txt"
+2026-02-28T09:42:14.871688Z  INFO tailwindcss_oxide::scanner: Reading "C:\\Website Project\\agno-portal\\postcss.config.mjs"
+2026-02-28T09:42:14.871682Z  INFO tailwindcss_oxide::scanner: Reading "C:\\Website Project\\agno-portal\\package.json"
+2026-02-28T09:42:14.871600Z  INFO tailwindcss_oxide::scanner: Reading "C:\\Website Project\\agno-portal\\next.config.ts"
+2026-02-28T09:42:14.871736Z  INFO tailwindcss_oxide::scanner: Reading "C:\\Website Project\\agno-portal\\public\\globe.svg"
+2026-02-28T09:42:14.871688Z  INFO tailwindcss_oxide::scanner: Reading "C:\\Website Project\\agno-portal\\public\\vercel.svg"
+2026-02-28T09:42:14.871776Z  INFO tailwindcss_oxide::scanner: Reading "C:\\Website Project\\agno-portal\\public\\next.svg"
+2026-02-28T09:42:14.871725Z  INFO tailwindcss_oxide::scanner: Reading "C:\\Website Project\\agno-portal\\test-prisma.ts"
+2026-02-28T09:42:14.871809Z  INFO tailwindcss_oxide::scanner: Reading "C:\\Website Project\\agno-portal\\tsconfig.json"
+2026-02-28T09:42:14.871627Z  INFO tailwindcss_oxide::scanner: Reading "C:\\Website Project\\agno-portal\\lib\\db\\prisma.ts"
+2026-02-28T09:42:14.871838Z  INFO tailwindcss_oxide::scanner: Reading "C:\\Website Project\\agno-portal\\public\\window.svg"
+2026-02-28T09:42:14.871408Z  INFO tailwindcss_oxide::scanner: Reading "C:\\Website Project\\agno-portal\\debug3.txt"
+2026-02-28T09:42:14.871850Z  INFO tailwindcss_oxide::scanner: Reading "C:\\Website Project\\agno-portal\\verify-user.ts"
+2026-02-28T09:42:14.873457Z  INFO tailwindcss_oxide::scanner: Reading "C:\\Website Project\\agno-portal\\README.md"
+2026-02-28T09:42:14.873635Z  INFO discover_sources: tailwindcss_oxide::scanner: exit
+2026-02-28T09:42:14.873686Z  INFO extract_candidates: tailwindcss_oxide::scanner: enter
+2026-02-28T09:42:14.873706Z  INFO extract_candidates:parse_all_blobs: tailwindcss_oxide::scanner: enter
+2026-02-28T09:42:14.873717Z  INFO extract_candidates:parse_all_blobs:extract: tailwindcss_oxide::scanner: enter
+2026-02-28T09:42:14.875046Z  INFO extract_candidates:parse_all_blobs:extract: tailwindcss_oxide::scanner: exit
+2026-02-28T09:42:14.875085Z  INFO extract_candidates:parse_all_blobs: tailwindcss_oxide::scanner: exit
+2026-02-28T09:42:14.875101Z  INFO extract_candidates:read_all_files: tailwindcss_oxide::scanner: enter
+2026-02-28T09:42:14.875112Z  INFO extract_candidates:read_all_files: tailwindcss_oxide::scanner: Reading 1 file(s)
+2026-02-28T09:42:14.875248Z  INFO extract_candidates:read_all_files: tailwindcss_oxide::scanner: Reading "C:\\Website Project\\agno-portal\\app\\globals.css"
+2026-02-28T09:42:14.875264Z  INFO extract_candidates:read_all_files: tailwindcss_oxide::scanner: exit
+2026-02-28T09:42:14.875276Z  INFO extract_candidates:extract_css_variables: tailwindcss_oxide::scanner: enter
+2026-02-28T09:42:14.875282Z  INFO extract_candidates:extract_css_variables:extract: tailwindcss_oxide::scanner: enter
+2026-02-28T09:42:14.875429Z  INFO extract_candidates:extract_css_variables:extract: tailwindcss_oxide::scanner: exit
+2026-02-28T09:42:14.875454Z  INFO extract_candidates:extract_css_variables: tailwindcss_oxide::scanner: exit
+2026-02-28T09:42:14.875736Z  INFO extract_candidates: tailwindcss_oxide::scanner: exit
+2026-02-28T09:42:14.876548Z  INFO get_files: tailwindcss_oxide::scanner: enter
+2026-02-28T09:42:14.876589Z  INFO get_files:discover_sources: tailwindcss_oxide::scanner: enter
+2026-02-28T09:42:14.876596Z  INFO get_files:discover_sources: tailwindcss_oxide::scanner: exit
+2026-02-28T09:42:14.876792Z  INFO get_files: tailwindcss_oxide::scanner: exit
+2026-02-28T09:42:14.877258Z  INFO get_globs: tailwindcss_oxide::scanner: enter
+2026-02-28T09:42:14.877273Z  INFO get_globs:discover_sources: tailwindcss_oxide::scanner: enter
+2026-02-28T09:42:14.877280Z  INFO get_globs:discover_sources: tailwindcss_oxide::scanner: exit
+2026-02-28T09:42:14.888467Z  INFO get_globs: tailwindcss_oxide::scanner: exit
