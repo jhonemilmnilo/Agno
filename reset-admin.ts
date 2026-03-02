@@ -1,6 +1,7 @@
 import { PrismaClient } from "@prisma/client";
 import { PrismaMariaDb } from "@prisma/adapter-mariadb";
 import * as mariadb from 'mariadb';
+import bcrypt from "bcryptjs";
 import 'dotenv/config';
 
 async function main() {
@@ -17,10 +18,18 @@ async function main() {
     const prisma = new PrismaClient({ adapter });
 
     try {
-        const users = await prisma.user.findMany({
-            select: { email: true, role: true }
+        const email = "admin@agno.com";
+        const plainPassword = "password123";
+
+        const salt = await bcrypt.genSalt(10);
+        const hashedPassword = await bcrypt.hash(plainPassword, salt);
+
+        await prisma.user.update({
+            where: { email },
+            data: { password: hashedPassword }
         });
-        console.log("Found Users:", JSON.stringify(users, null, 2));
+
+        console.log(`Successfully reset password for ${email} to: ${plainPassword}`);
     } catch (e) {
         console.error(e);
     }
