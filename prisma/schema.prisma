@@ -113,3 +113,48 @@ model Accommodation {
   createdAt     DateTime @default(now())
   updatedAt     DateTime @updatedAt
 }
+
+model TourismSpot {
+  id            String   @id @default(cuid())
+  name          String
+  category      String   // e.g. Beach, Falls, Historical, Park
+  description   String?  @db.Text
+  address       String
+  entranceFee   String?
+  bestTimeToVisit String?
+  contactNumber String?
+  imageUrl      String?
+
+  // Location Tracking
+  latitude      Float?
+  longitude     Float?
+  googleMapsUrl String?  @db.Text
+
+  isPublished   Boolean  @default(true)
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+}
+
+model Event {
+  id            String   @id @default(cuid())
+  title         String
+  description   String?  @db.Text
+  category      String   // e.g. Festival, Community, Holiday
+  startDate     DateTime
+  endDate       DateTime
+  venueName     String
+  address       String
+  contactNumber String?
+  imageUrl      String?
+
+  // Location Tracking
+  latitude      Float?
+  longitude     Float?
+  googleMapsUrl String?  @db.Text
+
+  isPublished   Boolean  @default(true)
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+}
+
+

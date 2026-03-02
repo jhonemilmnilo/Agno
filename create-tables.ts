@@ -58,10 +58,57 @@ async function main() {
       ) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
       `;
 
+        const createTourismSpotTable = `
+      CREATE TABLE IF NOT EXISTS TourismSpot (
+        id VARCHAR(191) NOT NULL,
+        name VARCHAR(191) NOT NULL,
+        category VARCHAR(191) NOT NULL,
+        description TEXT,
+        address VARCHAR(191) NOT NULL,
+        entranceFee VARCHAR(191),
+        bestTimeToVisit VARCHAR(191),
+        contactNumber VARCHAR(191),
+        imageUrl VARCHAR(191),
+        latitude DOUBLE,
+        longitude DOUBLE,
+        googleMapsUrl TEXT,
+        isPublished BOOLEAN NOT NULL DEFAULT true,
+        createdAt DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
+        updatedAt DATETIME(3) NOT NULL,
+        PRIMARY KEY (id)
+      ) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+      `;
+
+        const createEventTable = `
+      CREATE TABLE IF NOT EXISTS Event (
+        id VARCHAR(191) NOT NULL,
+        title VARCHAR(191) NOT NULL,
+        description TEXT,
+        category VARCHAR(191) NOT NULL,
+        startDate DATETIME(3) NOT NULL,
+        endDate DATETIME(3) NOT NULL,
+        venueName VARCHAR(191) NOT NULL,
+        address VARCHAR(191) NOT NULL,
+        contactNumber VARCHAR(191),
+        imageUrl VARCHAR(191),
+        latitude DOUBLE,
+        longitude DOUBLE,
+        googleMapsUrl TEXT,
+        isPublished BOOLEAN NOT NULL DEFAULT true,
+        createdAt DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
+        updatedAt DATETIME(3) NOT NULL,
+        PRIMARY KEY (id)
+      ) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+      `;
+
         await conn.query(createDiningTable);
         console.log("Dining table created.");
         await conn.query(createAccommodationTable);
         console.log("Accommodation table created.");
+        await conn.query(createTourismSpotTable);
+        console.log("TourismSpot table created.");
+        await conn.query(createEventTable);
+        console.log("Event table created.");
 
         conn.release();
     } catch (err) {

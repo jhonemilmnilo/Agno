@@ -197,3 +197,93 @@ export async function toggleAccommodationStatus(id: string, isPublished: boolean
     }
 }
 
+// ----------------------------------------
+// TOURISM SPOT (PLACE TO VISIT) ACTIONS
+// ----------------------------------------
+
+export async function addTourismSpot(formData: FormData) {
+    try {
+        const imageUrl = await processImageUpload(formData);
+
+        const newSpot = await prisma.tourismSpot.create({
+            data: {
+                name: formData.get("name") as string,
+                category: formData.get("category") as string,
+                description: formData.get("description") as string,
+                address: formData.get("address") as string,
+                entranceFee: formData.get("entranceFee") as string,
+                bestTimeToVisit: formData.get("bestTimeToVisit") as string,
+                contactNumber: formData.get("contactNumber") as string,
+                imageUrl: imageUrl,
+                latitude: formData.get("latitude") ? parseFloat(formData.get("latitude") as string) : null,
+                longitude: formData.get("longitude") ? parseFloat(formData.get("longitude") as string) : null,
+                googleMapsUrl: formData.get("googleMapsUrl") as string,
+                isPublished: true,
+            },
+        });
+
+        revalidatePath("/admin/tourism");
+        return { success: true, tourismSpot: newSpot };
+    } catch (error) {
+        console.error("Failed to add tourism spot:", error);
+        return { success: false, error: "Failed to create tourism spot entry." };
+    }
+}
+
+export async function deleteTourismSpot(id: string) {
+    try {
+        await prisma.tourismSpot.delete({
+            where: { id }
+        });
+        revalidatePath("/admin/tourism");
+        return { success: true };
+    } catch (error) {
+        console.error("Failed to delete tourism spot:", error);
+        return { success: false, error: "Failed to delete tourism spot entry." };
+    }
+}
+
+export async function updateTourismSpot(id: string, formData: FormData) {
+    try {
+        const imageUrl = await processImageUpload(formData);
+
+        const updatedSpot = await prisma.tourismSpot.update({
+            where: { id },
+            data: {
+                name: formData.get("name") as string,
+                category: formData.get("category") as string,
+                description: formData.get("description") as string,
+                address: formData.get("address") as string,
+                entranceFee: formData.get("entranceFee") as string,
+                bestTimeToVisit: formData.get("bestTimeToVisit") as string,
+                contactNumber: formData.get("contactNumber") as string,
+                imageUrl: imageUrl,
+                latitude: formData.get("latitude") ? parseFloat(formData.get("latitude") as string) : null,
+                longitude: formData.get("longitude") ? parseFloat(formData.get("longitude") as string) : null,
+                googleMapsUrl: formData.get("googleMapsUrl") as string,
+            },
+        });
+
+        revalidatePath("/admin/tourism");
+        return { success: true, tourismSpot: updatedSpot };
+    } catch (error) {
+        console.error("Failed to update tourism spot:", error);
+        return { success: false, error: "Failed to update tourism spot entry." };
+    }
+}
+
+export async function toggleTourismSpotStatus(id: string, isPublished: boolean) {
+    try {
+        await prisma.tourismSpot.update({
+            where: { id },
+            data: { isPublished }
+        });
+        revalidatePath("/admin/tourism");
+        return { success: true };
+    } catch (error) {
+        console.error("Failed to update status:", error);
+        return { success: false, error: "Failed to update tourism spot status." };
+    }
+}
+
+
