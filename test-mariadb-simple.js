@@ -2,11 +2,12 @@ const mariadb = require('mariadb');
 
 async function test() {
     const pool = mariadb.createPool({
-        host: 'localhost',
-        user: 'root',
-        password: 'password',
-        database: 'db',
-        connectionLimit: 5
+        host: 'gateway01.ap-southeast-1.prod.aws.tidbcloud.com',
+        port: 4000,
+        user: 'WmSk2xEwFA7sk9q.root',
+        password: '8BszwNfkdkZl3IdY',
+        database: 'fortune500',
+        ssl: { rejectUnauthorized: false }
     });
 
     try {
