@@ -213,3 +213,22 @@ model Hotline {
   updatedAt    DateTime  @updatedAt
 }
 
+model Project {
+  id           String    @id @default(cuid())
+  title        String
+  description  String    @db.Text
+  category     String
+  status       String
+  location     String
+  budget       String?
+  contractor   String?
+  startDate    DateTime?
+  endDate      DateTime?
+  progress     Int       @default(0)
+  imageUrl     String?
+  isPublished  Boolean   @default(true)
+  createdAt    DateTime  @default(now())
+  updatedAt    DateTime  @updatedAt
+}
+
+

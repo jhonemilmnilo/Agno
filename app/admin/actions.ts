@@ -707,3 +707,92 @@ export async function toggleHotlineStatus(id: string, isActive: boolean) {
         return { success: false, error: "Failed to update hotline status." };
     }
 }
+
+// ----------------------------------------
+// PROJECTS MODULE ACTIONS
+// ----------------------------------------
+
+export async function addProject(formData: FormData) {
+    try {
+        const imageUrl = await processImageUpload(formData);
+
+        const project = await prisma.project.create({
+            data: {
+                title: formData.get("title") as string,
+                description: formData.get("description") as string,
+                category: formData.get("category") as string,
+                status: formData.get("status") as string,
+                location: formData.get("location") as string,
+                budget: (formData.get("budget") as string) || null,
+                contractor: (formData.get("contractor") as string) || null,
+                startDate: formData.get("startDate") ? new Date(formData.get("startDate") as string) : null,
+                endDate: formData.get("endDate") ? new Date(formData.get("endDate") as string) : null,
+                progress: parseInt(formData.get("progress") as string || "0", 10),
+                imageUrl: imageUrl,
+                isPublished: true,
+            }
+        });
+
+        revalidatePath("/admin/projects");
+        return { success: true, project };
+    } catch (error) {
+        console.error("Failed to add project:", error);
+        return { success: false, error: "Failed to create project entry." };
+    }
+}
+
+export async function updateProject(id: string, formData: FormData) {
+    try {
+        const imageUrl = await processImageUpload(formData);
+
+        const project = await prisma.project.update({
+            where: { id },
+            data: {
+                title: formData.get("title") as string,
+                description: formData.get("description") as string,
+                category: formData.get("category") as string,
+                status: formData.get("status") as string,
+                location: formData.get("location") as string,
+                budget: (formData.get("budget") as string) || null,
+                contractor: (formData.get("contractor") as string) || null,
+                startDate: formData.get("startDate") ? new Date(formData.get("startDate") as string) : null,
+                endDate: formData.get("endDate") ? new Date(formData.get("endDate") as string) : null,
+                progress: parseInt(formData.get("progress") as string || "0", 10),
+                imageUrl: imageUrl,
+            }
+        });
+
+        revalidatePath("/admin/projects");
+        return { success: true, project };
+    } catch (error) {
+        console.error("Failed to update project:", error);
+        return { success: false, error: "Failed to update project entry." };
+    }
+}
+
+export async function deleteProject(id: string) {
+    try {
+        await prisma.project.delete({
+            where: { id }
+        });
+        revalidatePath("/admin/projects");
+        return { success: true };
+    } catch (error) {
+        console.error("Failed to delete project:", error);
+        return { success: false, error: "Failed to delete project entry." };
+    }
+}
+
+export async function toggleProjectStatus(id: string, isPublished: boolean) {
+    try {
+        await prisma.project.update({
+            where: { id },
+            data: { isPublished }
+        });
+        revalidatePath("/admin/projects");
+        return { success: true };
+    } catch (error) {
+        console.error("Failed to update status:", error);
+        return { success: false, error: "Failed to update project publication status." };
+    }
+}
