@@ -7,6 +7,9 @@ import * as z from "zod";
 import { motion } from "framer-motion";
 import { User, Mail, Lock, Building2 } from "lucide-react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
+import { toast } from "sonner";
+import { registerUser } from "@/app/auth/actions";
 
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -28,7 +31,23 @@ const signupSchema = z.object({
 
 type SignupFormValues = z.infer<typeof signupSchema>;
 
+const containerVariants = {
+    hidden: { opacity: 0 },
+    show: {
+        opacity: 1,
+        transition: {
+            staggerChildren: 0.1
+        }
+    }
+};
+
+const itemVariants = {
+    hidden: { opacity: 0, y: 15 },
+    show: { opacity: 1, y: 0, transition: { type: "spring", stiffness: 300, damping: 24 } }
+};
+
 export function SignupForm() {
+    const router = useRouter();
     const form = useForm<SignupFormValues>({
         resolver: zodResolver(signupSchema),
         defaultValues: {
@@ -39,22 +58,41 @@ export function SignupForm() {
         },
     });
 
-    const onSubmit = (data: SignupFormValues) => {
-        console.log("Signup form data:", data);
-        // Handle registration here
+    const onSubmit = async (data: SignupFormValues) => {
+        try {
+            const formData = new FormData();
+
+            const result = await registerUser(data);
+
+            if (result.error) {
+                toast.error(result.error);
+                return;
+            }
+
+            toast.success("Account created successfully!");
+            router.push("/auth/login");
+        } catch (error) {
+            toast.error("Something went wrong. Please try again.");
+            console.error(error);
+        }
     };
 
     return (
-        <div className="space-y-6">
-            <div className="space-y-2">
+        <motion.div
+            className="space-y-6"
+            variants={containerVariants}
+            initial="hidden"
+            animate="show"
+        >
+            <motion.div variants={itemVariants} className="space-y-2">
                 <h1 className="text-3xl font-bold tracking-tight">Create Account</h1>
                 <p className="text-slate-500">
                     Join our community and access local government services with ease.
                 </p>
-            </div>
+            </motion.div>
 
             <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
-                <div className="space-y-2">
+                <motion.div variants={itemVariants} className="space-y-2">
                     <Label htmlFor="fullName">Full Name</Label>
                     <div className="relative">
                         <User className="absolute left-3 top-3 h-4 w-4 text-slate-400" />
@@ -68,9 +106,9 @@ export function SignupForm() {
                     {form.formState.errors.fullName && (
                         <p className="text-sm text-red-500">{form.formState.errors.fullName.message}</p>
                     )}
-                </div>
+                </motion.div>
 
-                <div className="space-y-2">
+                <motion.div variants={itemVariants} className="space-y-2">
                     <Label htmlFor="email">Email Address</Label>
                     <div className="relative">
                         <Mail className="absolute left-3 top-3 h-4 w-4 text-slate-400" />
@@ -85,9 +123,9 @@ export function SignupForm() {
                     {form.formState.errors.email && (
                         <p className="text-sm text-red-500">{form.formState.errors.email.message}</p>
                     )}
-                </div>
+                </motion.div>
 
-                <div className="space-y-2">
+                <motion.div variants={itemVariants} className="space-y-2">
                     <Label htmlFor="password">Password</Label>
                     <div className="relative">
                         <Lock className="absolute left-3 top-3 h-4 w-4 text-slate-400" />
@@ -102,9 +140,9 @@ export function SignupForm() {
                     {form.formState.errors.password && (
                         <p className="text-sm text-red-500">{form.formState.errors.password.message}</p>
                     )}
-                </div>
+                </motion.div>
 
-                <div className="space-y-2">
+                <motion.div variants={itemVariants} className="space-y-2">
                     <Label htmlFor="accountType">Account Type</Label>
                     <Select
                         onValueChange={(value) => form.setValue("accountType", value as "CITIZEN" | "ADMIN")}
@@ -121,23 +159,25 @@ export function SignupForm() {
                             <SelectItem value="ADMIN">Administrator</SelectItem>
                         </SelectContent>
                     </Select>
-                </div>
+                </motion.div>
 
-                <Button
-                    type="submit"
-                    className="w-full bg-blue-600 text-white hover:bg-blue-700 h-11"
-                    disabled={form.formState.isSubmitting}
-                >
-                    {form.formState.isSubmitting ? "Creating account..." : "Sign Up"}
-                </Button>
+                <motion.div variants={itemVariants}>
+                    <Button
+                        type="submit"
+                        className="w-full bg-blue-600 text-white hover:bg-blue-700 h-11 transition-all"
+                        disabled={form.formState.isSubmitting}
+                    >
+                        {form.formState.isSubmitting ? "Creating account..." : "Sign Up"}
+                    </Button>
+                </motion.div>
             </form>
 
-            <p className="text-center text-sm text-slate-500">
+            <motion.p variants={itemVariants} className="text-center text-sm text-slate-500">
                 Already have an account?{" "}
                 <Link href="/auth/login" className="font-semibold text-blue-600 hover:underline">
                     Log in here
                 </Link>
-            </p>
-        </div>
+            </motion.p>
+        </motion.div>
     );
 }

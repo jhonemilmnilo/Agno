@@ -1,8 +1,8 @@
 "use client";
 
 import { useState, useEffect, useRef } from "react";
-import { useEvents } from "../providers/EventsProvider";
-import { useEventsForm } from "../hooks/useEventsForm";
+import { useNews } from "../providers/NewsProvider";
+import { useNewsForm } from "../hooks/useNewsForm";
 import {
     Dialog,
     DialogContent,
@@ -16,11 +16,11 @@ import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { MapPin, Image as ImageIcon, X, Loader2, Calendar, Info, Clock, Phone, Map as MapIcon } from "lucide-react";
+import { Image as ImageIcon, X, Loader2, Newspaper, Info, Calendar } from "lucide-react";
 
-export function AddEventModal() {
-    const { isAddModalOpen, setIsAddModalOpen, editingData, setEditingData } = useEvents();
-    const { handleSubmit, loading } = useEventsForm();
+export function AddNewsModal() {
+    const { isAddModalOpen, setIsAddModalOpen, editingData, setEditingData } = useNews();
+    const { handleSubmit, loading } = useNewsForm();
     const [imagePreview, setImagePreview] = useState<string | null>(null);
     const fileInputRef = useRef<HTMLInputElement>(null);
 
@@ -43,9 +43,8 @@ export function AddEventModal() {
         }
     };
 
-    const categories = ["Festival", "Community", "Religious", "Sports", "Other"];
+    const categories = ["Announcement", "Local News", "Advisory", "Project Update", "Other"];
 
-    // Format date for input[type="datetime-local"]
     const formatDateForInput = (dateString: string | undefined) => {
         if (!dateString) return "";
         const date = new Date(dateString);
@@ -60,18 +59,18 @@ export function AddEventModal() {
                 setImagePreview(null);
             }
         }}>
-            <DialogContent className="sm:max-w-5xl max-h-[90vh] overflow-y-auto bg-white dark:bg-[#0f1117] border-slate-200 dark:border-[#2a3040] p-0 gap-0 shadow-2xl rounded-2xl">
+            <DialogContent className="sm:max-w-4xl max-h-[90vh] overflow-y-auto bg-white dark:bg-[#0f1117] border-slate-200 dark:border-[#2a3040] p-0 gap-0 shadow-2xl rounded-2xl">
                 <DialogHeader className="p-8 pb-4 bg-slate-50/50 dark:bg-[#151b2b] sticky top-0 z-10 border-b border-slate-200 dark:border-[#2a3040]">
                     <div className="flex items-center space-x-3 mb-1">
                         <div className="p-2 bg-blue-600 rounded-lg">
-                            <Calendar className="w-5 h-5 text-white" />
+                            <Newspaper className="w-5 h-5 text-white" />
                         </div>
                         <div>
                             <DialogTitle className="text-2xl font-black text-slate-900 dark:text-white uppercase tracking-tight">
-                                {editingData ? "Edit Event Details" : "Create New Event"}
+                                {editingData ? "Edit News Article" : "Publish News Article"}
                             </DialogTitle>
                             <DialogDescription className="text-slate-500 dark:text-slate-400 font-medium">
-                                Share the upcoming happenings in Agno with the community.
+                                Keep the community informed with the latest local news and announcements.
                             </DialogDescription>
                         </div>
                     </div>
@@ -79,20 +78,20 @@ export function AddEventModal() {
 
                 <form onSubmit={handleSubmit} className="p-8 space-y-8">
                     <div className="grid grid-cols-1 lg:grid-cols-2 gap-10">
-                        {/* Left Column: Event details */}
+                        {/* Left Column: Article Logic */}
                         <div className="space-y-6">
                             <div className="flex items-center space-x-2 text-blue-600 dark:text-blue-400 mb-2">
                                 <Info className="w-4 h-4" />
-                                <h3 className="text-sm font-bold uppercase tracking-wider">Event Information</h3>
+                                <h3 className="text-sm font-bold uppercase tracking-wider">Article Information</h3>
                             </div>
 
                             <div className="space-y-2">
-                                <Label className="text-slate-700 dark:text-slate-300 font-bold">Event Title</Label>
+                                <Label className="text-slate-700 dark:text-slate-300 font-bold">Headline Title</Label>
                                 <Input
                                     name="title"
                                     required
                                     defaultValue={editingData?.title}
-                                    placeholder="e.g. Agno Umbrella Festival 2024"
+                                    placeholder="e.g. Agno Suspends Classes During Typhoon"
                                     className="h-12 bg-slate-50 dark:bg-[#1a1f2e] border-slate-200 dark:border-[#2a3040] focus:ring-2 focus:ring-blue-500/20"
                                 />
                             </div>
@@ -100,7 +99,7 @@ export function AddEventModal() {
                             <div className="grid grid-cols-2 gap-4">
                                 <div className="space-y-2">
                                     <Label className="text-slate-700 dark:text-slate-300 font-bold">Category</Label>
-                                    <Select name="category" defaultValue={editingData?.category || "Community"}>
+                                    <Select name="category" defaultValue={editingData?.category || "Announcement"}>
                                         <SelectTrigger className="h-12 bg-slate-50 dark:bg-[#1a1f2e] border-slate-200 dark:border-[#2a3040]">
                                             <SelectValue />
                                         </SelectTrigger>
@@ -112,103 +111,11 @@ export function AddEventModal() {
                                     </Select>
                                 </div>
                                 <div className="space-y-2">
-                                    <Label className="text-slate-700 dark:text-slate-300 font-bold flex items-center">
-                                        <Phone className="w-3 h-3 mr-1" /> Contact Info
-                                    </Label>
+                                    <Label className="text-slate-700 dark:text-slate-300 font-bold">Author</Label>
                                     <Input
-                                        name="contactNumber"
-                                        defaultValue={editingData?.contactNumber}
-                                        placeholder="e.g. 0912-345-6789"
-                                        className="h-12 bg-slate-50 dark:bg-[#1a1f2e] border-slate-200 dark:border-[#2a3040]"
-                                    />
-                                </div>
-                            </div>
-
-                            <div className="grid grid-cols-2 gap-4">
-                                <div className="space-y-2">
-                                    <Label className="text-slate-700 dark:text-slate-300 font-bold flex items-center">
-                                        <Clock className="w-3 h-3 mr-1" /> Start Date & Time
-                                    </Label>
-                                    <Input
-                                        type="datetime-local"
-                                        name="startDate"
-                                        required
-                                        defaultValue={formatDateForInput(editingData?.startDate)}
-                                        className="h-12 bg-slate-50 dark:bg-[#1a1f2e] border-slate-200 dark:border-[#2a3040]"
-                                    />
-                                </div>
-                                <div className="space-y-2">
-                                    <Label className="text-slate-700 dark:text-slate-300 font-bold flex items-center">
-                                        <Clock className="w-3 h-3 mr-1" /> End Date & Time
-                                    </Label>
-                                    <Input
-                                        type="datetime-local"
-                                        name="endDate"
-                                        required
-                                        defaultValue={formatDateForInput(editingData?.endDate)}
-                                        className="h-12 bg-slate-50 dark:bg-[#1a1f2e] border-slate-200 dark:border-[#2a3040]"
-                                    />
-                                </div>
-                            </div>
-
-                            <div className="space-y-2">
-                                <Label className="text-slate-700 dark:text-slate-300 font-bold">Event Description</Label>
-                                <Textarea
-                                    name="description"
-                                    defaultValue={editingData?.description}
-                                    placeholder="Provide more details about the event..."
-                                    className="min-h-[120px] bg-slate-50 dark:bg-[#1a1f2e] border-slate-200 dark:border-[#2a3040] resize-none"
-                                />
-                            </div>
-                        </div>
-
-                        {/* Right Column: Location & Image */}
-                        <div className="space-y-6">
-                            <div className="flex items-center space-x-2 text-blue-600 dark:text-blue-400 mb-2">
-                                <MapPin className="w-4 h-4" />
-                                <h3 className="text-sm font-bold uppercase tracking-wider">Venue & Media</h3>
-                            </div>
-
-                            <div className="space-y-2">
-                                <Label className="text-slate-700 dark:text-slate-300 font-bold">Venue Name</Label>
-                                <Input
-                                    name="venueName"
-                                    required
-                                    defaultValue={editingData?.venueName}
-                                    placeholder="e.g. Agno Municipal Plaza"
-                                    className="h-12 bg-slate-50 dark:bg-[#1a1f2e] border-slate-200 dark:border-[#2a3040]"
-                                />
-                            </div>
-
-                            <div className="space-y-2">
-                                <Label className="text-slate-700 dark:text-slate-300 font-bold">Address / Barangay</Label>
-                                <Input
-                                    name="address"
-                                    required
-                                    defaultValue={editingData?.address}
-                                    placeholder="e.g. Poblacion, Agno"
-                                    className="h-12 bg-slate-50 dark:bg-[#1a1f2e] border-slate-200 dark:border-[#2a3040]"
-                                />
-                            </div>
-
-                            <div className="grid grid-cols-2 gap-4">
-                                <div className="space-y-2">
-                                    <Label className="text-slate-700 dark:text-slate-300 font-bold text-xs uppercase opacity-70">Latitude</Label>
-                                    <Input
-                                        name="latitude"
-                                        type="number"
-                                        step="any"
-                                        defaultValue={editingData?.latitude}
-                                        className="h-12 bg-slate-50 dark:bg-[#1a1f2e] border-slate-200 dark:border-[#2a3040]"
-                                    />
-                                </div>
-                                <div className="space-y-2">
-                                    <Label className="text-slate-700 dark:text-slate-300 font-bold text-xs uppercase opacity-70">Longitude</Label>
-                                    <Input
-                                        name="longitude"
-                                        type="number"
-                                        step="any"
-                                        defaultValue={editingData?.longitude}
+                                        name="author"
+                                        defaultValue={editingData?.author || "Municipal Office"}
+                                        placeholder="e.g. Mayor's Office"
                                         className="h-12 bg-slate-50 dark:bg-[#1a1f2e] border-slate-200 dark:border-[#2a3040]"
                                     />
                                 </div>
@@ -216,21 +123,40 @@ export function AddEventModal() {
 
                             <div className="space-y-2">
                                 <Label className="text-slate-700 dark:text-slate-300 font-bold flex items-center">
-                                    <MapIcon className="w-3 h-3 mr-1" /> Google Maps URL
+                                    <Calendar className="w-3 h-3 mr-1" /> Publish Date
                                 </Label>
                                 <Input
-                                    name="googleMapsUrl"
-                                    defaultValue={editingData?.googleMapsUrl}
-                                    placeholder="https://goo.gl/maps/..."
+                                    type="datetime-local"
+                                    name="publishDate"
+                                    required
+                                    defaultValue={formatDateForInput(editingData?.publishDate || new Date().toISOString())}
                                     className="h-12 bg-slate-50 dark:bg-[#1a1f2e] border-slate-200 dark:border-[#2a3040]"
                                 />
                             </div>
 
+                            <div className="space-y-2 flex-grow">
+                                <Label className="text-slate-700 dark:text-slate-300 font-bold">Article Content</Label>
+                                <Textarea
+                                    name="content"
+                                    required
+                                    defaultValue={editingData?.content}
+                                    placeholder="Write the full news story here..."
+                                    className="min-h-[220px] bg-slate-50 dark:bg-[#1a1f2e] border-slate-200 dark:border-[#2a3040] resize-none"
+                                />
+                            </div>
+                        </div>
+
+                        {/* Right Column: Media */}
+                        <div className="space-y-6">
+                            <div className="flex items-center space-x-2 text-blue-600 dark:text-blue-400 mb-2">
+                                <ImageIcon className="w-4 h-4" />
+                                <h3 className="text-sm font-bold uppercase tracking-wider">Featured Image</h3>
+                            </div>
+
                             <div className="space-y-2">
-                                <Label className="text-slate-700 dark:text-slate-300 font-bold">Image Upload</Label>
                                 <div
                                     onClick={() => fileInputRef.current?.click()}
-                                    className="group relative h-40 rounded-2xl border-2 border-dashed border-slate-300 dark:border-slate-700 hover:border-blue-500 dark:hover:border-blue-400 bg-slate-50 dark:bg-[#1a1f2e] transition-all cursor-pointer overflow-hidden flex flex-col items-center justify-center"
+                                    className="group relative h-64 rounded-2xl border-2 border-dashed border-slate-300 dark:border-slate-700 hover:border-blue-500 dark:hover:border-blue-400 bg-slate-50 dark:bg-[#1a1f2e] transition-all cursor-pointer overflow-hidden flex flex-col items-center justify-center"
                                 >
                                     {imagePreview ? (
                                         <>
@@ -286,9 +212,9 @@ export function AddEventModal() {
                             className="h-12 px-10 bg-blue-600 hover:bg-blue-700 text-white font-bold shadow-lg shadow-blue-500/20 rounded-xl transition-all hover:scale-[1.02] active:scale-[0.98]"
                         >
                             {loading ? (
-                                <><Loader2 className="w-4 h-4 mr-2 animate-spin" /> Saving...</>
+                                <><Loader2 className="w-4 h-4 mr-2 animate-spin" /> Publishing...</>
                             ) : (
-                                editingData ? "Update Event" : "Publish Event"
+                                editingData ? "Update Article" : "Publish Article"
                             )}
                         </Button>
                     </DialogFooter>

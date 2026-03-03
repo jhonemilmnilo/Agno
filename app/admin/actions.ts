@@ -377,4 +377,160 @@ export async function toggleEventStatus(id: string, isPublished: boolean) {
     }
 }
 
+// ----------------------------------------
+// NEWS ACTIONS
+// ----------------------------------------
 
+export async function addNews(formData: FormData) {
+    try {
+        const imageUrl = await processImageUpload(formData);
+
+        const newNews = await prisma.news.create({
+            data: {
+                title: formData.get("title") as string,
+                content: formData.get("content") as string,
+                author: formData.get("author") as string | null,
+                category: formData.get("category") as string,
+                publishDate: new Date(formData.get("publishDate") as string || Date.now()),
+                imageUrl: imageUrl,
+                isPublished: true,
+            },
+        });
+
+        revalidatePath("/admin/news");
+        return { success: true, news: newNews };
+    } catch (error) {
+        console.error("Failed to add news:", error);
+        return { success: false, error: "Failed to create news entry." };
+    }
+}
+
+export async function updateNews(id: string, formData: FormData) {
+    try {
+        const imageUrl = await processImageUpload(formData);
+
+        const updatedNews = await prisma.news.update({
+            where: { id },
+            data: {
+                title: formData.get("title") as string,
+                content: formData.get("content") as string,
+                author: formData.get("author") as string | null,
+                category: formData.get("category") as string,
+                publishDate: new Date(formData.get("publishDate") as string || Date.now()),
+                imageUrl: imageUrl,
+            },
+        });
+
+        revalidatePath("/admin/news");
+        return { success: true, news: updatedNews };
+    } catch (error) {
+        console.error("Failed to update news:", error);
+        return { success: false, error: "Failed to update news entry." };
+    }
+}
+
+export async function deleteNews(id: string) {
+    try {
+        await prisma.news.delete({
+            where: { id }
+        });
+        revalidatePath("/admin/news");
+        return { success: true };
+    } catch (error) {
+        console.error("Failed to delete news:", error);
+        return { success: false, error: "Failed to delete news entry." };
+    }
+}
+
+export async function toggleNewsStatus(id: string, isPublished: boolean) {
+    try {
+        await prisma.news.update({
+            where: { id },
+            data: { isPublished }
+        });
+        revalidatePath("/admin/news");
+        return { success: true };
+    } catch (error) {
+        console.error("Failed to update status:", error);
+        return { success: false, error: "Failed to update news status." };
+    }
+}
+
+// ----------------------------------------
+// JOB POSTING ACTIONS
+// ----------------------------------------
+
+export async function addJob(formData: FormData) {
+    try {
+        const newJob = await prisma.job.create({
+            data: {
+                title: formData.get("title") as string,
+                department: formData.get("department") as string,
+                description: formData.get("description") as string,
+                qualifications: formData.get("qualifications") as string,
+                requirements: formData.get("requirements") as string,
+                salary: formData.get("salary") as string | null,
+                employmentType: formData.get("employmentType") as string,
+                deadline: formData.get("deadline") ? new Date(formData.get("deadline") as string) : null,
+                isActive: true, // Default to true when created
+            },
+        });
+
+        revalidatePath("/admin/jobs");
+        return { success: true, job: newJob };
+    } catch (error) {
+        console.error("Failed to add job:", error);
+        return { success: false, error: "Failed to create job entry." };
+    }
+}
+
+export async function updateJob(id: string, formData: FormData) {
+    try {
+        const updatedJob = await prisma.job.update({
+            where: { id },
+            data: {
+                title: formData.get("title") as string,
+                department: formData.get("department") as string,
+                description: formData.get("description") as string,
+                qualifications: formData.get("qualifications") as string,
+                requirements: formData.get("requirements") as string,
+                salary: formData.get("salary") as string | null,
+                employmentType: formData.get("employmentType") as string,
+                deadline: formData.get("deadline") ? new Date(formData.get("deadline") as string) : null,
+            },
+        });
+
+        revalidatePath("/admin/jobs");
+        return { success: true, job: updatedJob };
+    } catch (error) {
+        console.error("Failed to update job:", error);
+        return { success: false, error: "Failed to update job entry." };
+    }
+}
+
+export async function deleteJob(id: string) {
+    try {
+        await prisma.job.delete({
+            where: { id }
+        });
+        revalidatePath("/admin/jobs");
+        return { success: true };
+    } catch (error) {
+        console.error("Failed to delete job:", error);
+        return { success: false, error: "Failed to delete job entry." };
+    }
+}
+
+export async function toggleJobStatus(id: string, isActive: boolean) {
+    try {
+        await prisma.job.update({
+            where: { id },
+            data: { isActive }
+        });
+        revalidatePath("/admin/jobs");
+        return { success: true };
+    } catch (error) {
+        console.error("Failed to update status:", error);
+        return { success: false, error: "Failed to update job status." };
+    }
+}

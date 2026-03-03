@@ -2,9 +2,9 @@
 
 import { createContext, useContext, useState, useEffect, ReactNode } from "react";
 
-interface EventsContextType {
-    events: any[];
-    setEvents: (data: any[]) => void;
+interface NewsContextType {
+    newsData: any[];
+    setNewsData: (data: any[]) => void;
     searchTerm: string;
     setSearchTerm: (term: string) => void;
     isAddModalOpen: boolean;
@@ -15,24 +15,24 @@ interface EventsContextType {
     setSelectedCategory: (category: string) => void;
 }
 
-const EventsContext = createContext<EventsContextType | undefined>(undefined);
+const NewsContext = createContext<NewsContextType | undefined>(undefined);
 
-export function EventsProvider({ children, initialData }: { children: ReactNode; initialData: any[] }) {
-    const [events, setEvents] = useState(initialData);
+export function NewsProvider({ children, initialData }: { children: ReactNode; initialData: any[] }) {
+    const [newsData, setNewsData] = useState(initialData);
     const [searchTerm, setSearchTerm] = useState("");
     const [isAddModalOpen, setIsAddModalOpen] = useState(false);
     const [editingData, setEditingData] = useState<any | null>(null);
     const [selectedCategory, setSelectedCategory] = useState("All");
 
     useEffect(() => {
-        setEvents(initialData);
+        setNewsData(initialData);
     }, [initialData]);
 
     return (
-        <EventsContext.Provider
+        <NewsContext.Provider
             value={{
-                events,
-                setEvents,
+                newsData,
+                setNewsData,
                 searchTerm,
                 setSearchTerm,
                 isAddModalOpen,
@@ -44,14 +44,14 @@ export function EventsProvider({ children, initialData }: { children: ReactNode;
             }}
         >
             {children}
-        </EventsContext.Provider>
+        </NewsContext.Provider>
     );
 }
 
-export function useEvents() {
-    const context = useContext(EventsContext);
+export function useNews() {
+    const context = useContext(NewsContext);
     if (context === undefined) {
-        throw new Error("useEvents must be used within an EventsProvider");
+        throw new Error("useNews must be used within a NewsProvider");
     }
     return context;
 }

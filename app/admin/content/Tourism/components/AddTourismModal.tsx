@@ -228,7 +228,7 @@ export function AddTourismModal() {
                                     )}
                                     <input
                                         type="file"
-                                        name="image"
+                                        name="imageFile"
                                         accept="image/*"
                                         className="hidden"
                                         ref={fileInputRef}

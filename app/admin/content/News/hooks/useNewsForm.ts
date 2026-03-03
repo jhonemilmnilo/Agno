@@ -1,0 +1,37 @@
+"use client";
+
+import { useState } from "react";
+import { useNews } from "../providers/NewsProvider";
+import { addNews, updateNews } from "@/app/admin/actions";
+import { toast } from "sonner";
+
+export function useNewsForm() {
+    const { setIsAddModalOpen, editingData, setEditingData } = useNews();
+    const [loading, setLoading] = useState(false);
+
+    const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+        e.preventDefault();
+        setLoading(true);
+
+        const formData = new FormData(e.currentTarget);
+
+        try {
+            if (editingData) {
+                await updateNews(editingData.id, formData);
+                toast.success("News updated successfully!");
+            } else {
+                await addNews(formData);
+                toast.success("News published successfully!");
+            }
+            setIsAddModalOpen(false);
+            setEditingData(null);
+        } catch (error) {
+            console.error("Error saving news:", error);
+            toast.error("Failed to save news. Please try again.");
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    return { handleSubmit, loading };
+}
