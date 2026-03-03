@@ -4,7 +4,7 @@
   "private": true,
   "scripts": {
     "dev": "next dev",
-    "build": "set PRISMA_CLIENT_ENGINE_TYPE=library && next build",
+    "build": "next build",
     "start": "next start",
     "lint": "eslint"
   },

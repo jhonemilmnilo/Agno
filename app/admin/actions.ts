@@ -286,4 +286,95 @@ export async function toggleTourismSpotStatus(id: string, isPublished: boolean) 
     }
 }
 
+// ----------------------------------------
+// EVENT ACTIONS
+// ----------------------------------------
+
+export async function addEvent(formData: FormData) {
+    try {
+        const imageUrl = await processImageUpload(formData);
+
+        const newEvent = await prisma.event.create({
+            data: {
+                title: formData.get("title") as string,
+                description: formData.get("description") as string,
+                category: formData.get("category") as string,
+                startDate: new Date(formData.get("startDate") as string),
+                endDate: new Date(formData.get("endDate") as string),
+                venueName: formData.get("venueName") as string,
+                address: formData.get("address") as string,
+                contactNumber: formData.get("contactNumber") as string,
+                imageUrl: imageUrl,
+                latitude: formData.get("latitude") ? parseFloat(formData.get("latitude") as string) : null,
+                longitude: formData.get("longitude") ? parseFloat(formData.get("longitude") as string) : null,
+                googleMapsUrl: formData.get("googleMapsUrl") as string,
+                isPublished: true,
+            },
+        });
+
+        revalidatePath("/admin/events");
+        return { success: true, event: newEvent };
+    } catch (error) {
+        console.error("Failed to add event:", error);
+        return { success: false, error: "Failed to create event entry." };
+    }
+}
+
+export async function updateEvent(id: string, formData: FormData) {
+    try {
+        const imageUrl = await processImageUpload(formData);
+
+        const updatedEvent = await prisma.event.update({
+            where: { id },
+            data: {
+                title: formData.get("title") as string,
+                description: formData.get("description") as string,
+                category: formData.get("category") as string,
+                startDate: new Date(formData.get("startDate") as string),
+                endDate: new Date(formData.get("endDate") as string),
+                venueName: formData.get("venueName") as string,
+                address: formData.get("address") as string,
+                contactNumber: formData.get("contactNumber") as string,
+                imageUrl: imageUrl,
+                latitude: formData.get("latitude") ? parseFloat(formData.get("latitude") as string) : null,
+                longitude: formData.get("longitude") ? parseFloat(formData.get("longitude") as string) : null,
+                googleMapsUrl: formData.get("googleMapsUrl") as string,
+            },
+        });
+
+        revalidatePath("/admin/events");
+        return { success: true, event: updatedEvent };
+    } catch (error) {
+        console.error("Failed to update event:", error);
+        return { success: false, error: "Failed to update event entry." };
+    }
+}
+
+export async function deleteEvent(id: string) {
+    try {
+        await prisma.event.delete({
+            where: { id }
+        });
+        revalidatePath("/admin/events");
+        return { success: true };
+    } catch (error) {
+        console.error("Failed to delete event:", error);
+        return { success: false, error: "Failed to delete event entry." };
+    }
+}
+
+export async function toggleEventStatus(id: string, isPublished: boolean) {
+    try {
+        await prisma.event.update({
+            where: { id },
+            data: { isPublished }
+        });
+        revalidatePath("/admin/events");
+        return { success: true };
+    } catch (error) {
+        console.error("Failed to update status:", error);
+        return { success: false, error: "Failed to update event status." };
+    }
+}
+
 

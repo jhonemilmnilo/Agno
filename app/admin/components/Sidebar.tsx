@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { LayoutDashboard, Newspaper, Utensils, BedDouble, Map, AlertTriangle, Briefcase, Settings, LogOut } from "lucide-react";
+import { LayoutDashboard, Newspaper, Utensils, BedDouble, Map, AlertTriangle, Briefcase, Settings, LogOut, Calendar } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { ThemeToggle } from "@/components/ThemeToggle";
 
@@ -16,6 +16,7 @@ export function Sidebar({ session }: SidebarProps) {
     const menuItems = [
         { href: "/admin/dashboard", label: "Dashboard", icon: LayoutDashboard },
         { href: "/admin/news", label: "News & Updates", icon: Newspaper, category: "Content" },
+        { href: "/admin/events", label: "Events", icon: Calendar },
         { href: "/admin/dining", label: "Kainan (Dining)", icon: Utensils },
         { href: "/admin/accommodation", label: "Tuluyan (Stay)", icon: BedDouble },
         { href: "/admin/tourism", label: "Tourism Spots", icon: Map },

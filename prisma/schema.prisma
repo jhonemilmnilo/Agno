@@ -5,12 +5,12 @@
 // Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
 
 generator client {
-  provider        = "prisma-client-js"
-  previewFeatures = ["driverAdapters"]
+  provider = "prisma-client-js"
 }
 
 datasource db {
   provider = "mysql"
+  url      = "mysql://WmSk2xEwFA7sk9q.root:8BszwNfkdkZl3IdY@gateway01.ap-southeast-1.prod.aws.tidbcloud.com:4000/fortune500?sslaccept=strict&connection_limit=50"
 }
 
 model User {
