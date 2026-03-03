@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { LayoutDashboard, Newspaper, Utensils, BedDouble, Map, AlertTriangle, Briefcase, Settings, LogOut, Calendar, Users } from "lucide-react";
+import { LayoutDashboard, Newspaper, Utensils, BedDouble, Map, AlertTriangle, Briefcase, Settings, LogOut, Calendar, Users, Phone } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { ThemeToggle } from "@/components/ThemeToggle";
 
@@ -23,6 +23,7 @@ export function Sidebar({ session }: SidebarProps) {
         { href: "/admin/reports", label: "Public Reports", icon: AlertTriangle, category: "Management", badge: 3 },
         { href: "/admin/jobs", label: "Job Postings", icon: Briefcase },
         { href: "/admin/officials", label: "Council Members", icon: Users },
+        { href: "/admin/hotlines", label: "Hotlines", icon: Phone },
     ];
 
     return (

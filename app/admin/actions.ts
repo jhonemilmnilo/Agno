@@ -626,3 +626,84 @@ export async function toggleOfficialStatus(id: string, isActive: boolean) {
         return { success: false, error: "Failed to update official status." };
     }
 }
+
+// ----------------------------------------
+// HOTLINE DIRECTORY ACTIONS
+// ----------------------------------------
+
+export async function addHotline(formData: FormData) {
+    try {
+        const orderValue = formData.get("order") as string;
+        const parsedOrder = orderValue ? parseInt(orderValue, 10) : 0;
+
+        const newHotline = await prisma.hotline.create({
+            data: {
+                name: formData.get("name") as string,
+                category: formData.get("category") as string,
+                mobileNumber: formData.get("mobileNumber") as string | null,
+                telephone: formData.get("telephone") as string | null,
+                address: formData.get("address") as string | null,
+                order: isNaN(parsedOrder) ? 0 : parsedOrder,
+                isActive: true,
+            },
+        });
+
+        revalidatePath("/admin/hotlines");
+        return { success: true, hotline: newHotline };
+    } catch (error) {
+        console.error("Failed to add hotline:", error);
+        return { success: false, error: "Failed to create hotline entry." };
+    }
+}
+
+export async function updateHotline(id: string, formData: FormData) {
+    try {
+        const orderValue = formData.get("order") as string;
+        const parsedOrder = orderValue ? parseInt(orderValue, 10) : 0;
+
+        const updatedHotline = await prisma.hotline.update({
+            where: { id },
+            data: {
+                name: formData.get("name") as string,
+                category: formData.get("category") as string,
+                mobileNumber: formData.get("mobileNumber") as string | null,
+                telephone: formData.get("telephone") as string | null,
+                address: formData.get("address") as string | null,
+                order: isNaN(parsedOrder) ? 0 : parsedOrder,
+            },
+        });
+
+        revalidatePath("/admin/hotlines");
+        return { success: true, hotline: updatedHotline };
+    } catch (error) {
+        console.error("Failed to update hotline:", error);
+        return { success: false, error: "Failed to update hotline entry." };
+    }
+}
+
+export async function deleteHotline(id: string) {
+    try {
+        await prisma.hotline.delete({
+            where: { id }
+        });
+        revalidatePath("/admin/hotlines");
+        return { success: true };
+    } catch (error) {
+        console.error("Failed to delete hotline:", error);
+        return { success: false, error: "Failed to delete hotline entry." };
+    }
+}
+
+export async function toggleHotlineStatus(id: string, isActive: boolean) {
+    try {
+        await prisma.hotline.update({
+            where: { id },
+            data: { isActive }
+        });
+        revalidatePath("/admin/hotlines");
+        return { success: true };
+    } catch (error) {
+        console.error("Failed to update status:", error);
+        return { success: false, error: "Failed to update hotline status." };
+    }
+}
