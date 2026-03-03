@@ -534,3 +534,95 @@ export async function toggleJobStatus(id: string, isActive: boolean) {
         return { success: false, error: "Failed to update job status." };
     }
 }
+
+// ----------------------------------------
+// COUNCIL MEMBERS (OFFICIALS) ACTIONS
+// ----------------------------------------
+
+export async function addOfficial(formData: FormData) {
+    try {
+        const imageUrl = await processImageUpload(formData);
+
+        // Convert the order field to an integer safely
+        const orderValue = formData.get("order") as string;
+        const parsedOrder = orderValue ? parseInt(orderValue, 10) : 0;
+
+        const newOfficial = await prisma.official.create({
+            data: {
+                name: formData.get("name") as string,
+                position: formData.get("position") as string,
+                contactNumber: formData.get("contactNumber") as string | null,
+                facebookUrl: formData.get("facebookUrl") as string | null,
+                bio: formData.get("bio") as string | null,
+                termStart: formData.get("termStart") ? new Date(formData.get("termStart") as string) : null,
+                termEnd: formData.get("termEnd") ? new Date(formData.get("termEnd") as string) : null,
+                order: isNaN(parsedOrder) ? 0 : parsedOrder,
+                imageUrl: imageUrl,
+                isActive: true,
+            },
+        });
+
+        revalidatePath("/admin/officials");
+        return { success: true, official: newOfficial };
+    } catch (error) {
+        console.error("Failed to add official:", error);
+        return { success: false, error: "Failed to create official entry." };
+    }
+}
+
+export async function updateOfficial(id: string, formData: FormData) {
+    try {
+        const imageUrl = await processImageUpload(formData);
+
+        const orderValue = formData.get("order") as string;
+        const parsedOrder = orderValue ? parseInt(orderValue, 10) : 0;
+
+        const updatedOfficial = await prisma.official.update({
+            where: { id },
+            data: {
+                name: formData.get("name") as string,
+                position: formData.get("position") as string,
+                contactNumber: formData.get("contactNumber") as string | null,
+                facebookUrl: formData.get("facebookUrl") as string | null,
+                bio: formData.get("bio") as string | null,
+                termStart: formData.get("termStart") ? new Date(formData.get("termStart") as string) : null,
+                termEnd: formData.get("termEnd") ? new Date(formData.get("termEnd") as string) : null,
+                order: isNaN(parsedOrder) ? 0 : parsedOrder,
+                imageUrl: imageUrl,
+            },
+        });
+
+        revalidatePath("/admin/officials");
+        return { success: true, official: updatedOfficial };
+    } catch (error) {
+        console.error("Failed to update official:", error);
+        return { success: false, error: "Failed to update official entry." };
+    }
+}
+
+export async function deleteOfficial(id: string) {
+    try {
+        await prisma.official.delete({
+            where: { id }
+        });
+        revalidatePath("/admin/officials");
+        return { success: true };
+    } catch (error) {
+        console.error("Failed to delete official:", error);
+        return { success: false, error: "Failed to delete official entry." };
+    }
+}
+
+export async function toggleOfficialStatus(id: string, isActive: boolean) {
+    try {
+        await prisma.official.update({
+            where: { id },
+            data: { isActive }
+        });
+        revalidatePath("/admin/officials");
+        return { success: true };
+    } catch (error) {
+        console.error("Failed to update status:", error);
+        return { success: false, error: "Failed to update official status." };
+    }
+}
