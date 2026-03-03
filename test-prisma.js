@@ -1,12 +1,13 @@
 const { PrismaClient } = require('@prisma/client');
+const fs = require('fs');
 const prisma = new PrismaClient();
 
 async function main() {
     try {
         const users = await prisma.user.findMany({ take: 1 });
-        console.log('Prisma query successful:', users);
+        fs.writeFileSync('test-error.txt', 'Success: ' + JSON.stringify(users));
     } catch (error) {
-        console.error('Prisma query failed:', error);
+        fs.writeFileSync('test-error.txt', 'Error: ' + error.stack);
     } finally {
         await prisma.$disconnect();
     }
