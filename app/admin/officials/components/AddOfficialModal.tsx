@@ -116,6 +116,9 @@ export function AddOfficialModal() {
                                     ref={fileInputRef}
                                     onChange={handleImageChange}
                                 />
+                                {editingData?.imageUrl && imagePreview === editingData.imageUrl && (
+                                    <input type="hidden" name="imageUrl" value={editingData.imageUrl} />
+                                )}
                             </div>
 
                             <div className="space-y-2 mt-6">

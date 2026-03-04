@@ -192,6 +192,9 @@ export function AddNewsModal() {
                                         ref={fileInputRef}
                                         onChange={handleImageChange}
                                     />
+                                    {editingData?.imageUrl && imagePreview === editingData.imageUrl && (
+                                        <input type="hidden" name="imageUrl" value={editingData.imageUrl} />
+                                    )}
                                 </div>
                             </div>
                         </div>

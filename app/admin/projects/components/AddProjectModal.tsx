@@ -147,7 +147,7 @@ export function AddProjectModal() {
                                 </div>
                             )}
                         </div>
-                        {editingData?.imageUrl && !imagePreview && (
+                        {editingData?.imageUrl && imagePreview === editingData.imageUrl && (
                             <input type="hidden" name="imageUrl" value={editingData.imageUrl} />
                         )}
                     </div>
