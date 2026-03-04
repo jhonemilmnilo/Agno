@@ -2,7 +2,11 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { LayoutDashboard, Newspaper, Utensils, BedDouble, Map, AlertTriangle, Briefcase, Settings, LogOut, Calendar, Users, Phone, FolderKanban } from "lucide-react";
+import {
+    LayoutDashboard, Users, Newspaper,
+    Briefcase, Image as ImageIcon, MapPin, Map,
+    UtensilsCrossed, Calendar, Phone, FolderKanban, ShieldCheck, Contact, BedDouble, AlertTriangle, Settings, LogOut
+} from "lucide-react";
 import { cn } from "@/lib/utils";
 import { ThemeToggle } from "@/components/ThemeToggle";
 
@@ -18,13 +22,14 @@ export function Sidebar({ session }: SidebarProps) {
         { href: "/admin/news", label: "News & Updates", icon: Newspaper, category: "Content" },
         { href: "/admin/events", label: "Events", icon: Calendar },
         { href: "/admin/projects", label: "LGU Projects", icon: FolderKanban },
-        { href: "/admin/dining", label: "Kainan (Dining)", icon: Utensils },
+        { href: "/admin/dining", label: "Kainan (Dining)", icon: UtensilsCrossed },
         { href: "/admin/accommodation", label: "Tuluyan (Stay)", icon: BedDouble },
         { href: "/admin/tourism", label: "Tourism Spots", icon: Map },
         { href: "/admin/reports", label: "Public Reports", icon: AlertTriangle, category: "Management", badge: 3 },
         { href: "/admin/jobs", label: "Job Postings", icon: Briefcase },
         { href: "/admin/officials", label: "Council Members", icon: Users },
         { href: "/admin/hotlines", label: "Hotlines", icon: Phone },
+        { href: "/admin/households", label: "Household Map", icon: MapPin, category: "Data & Analysis" },
     ];
 
     return (

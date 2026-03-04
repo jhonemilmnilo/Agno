@@ -1,0 +1,193 @@
+"use client";
+
+import { useEffect, useState } from "react";
+import { useHousehold } from "../providers/HouseholdProvider";
+import dynamic from "next/dynamic";
+import { Loader2, Users, AlertTriangle, Phone, ShieldCheck } from "lucide-react";
+
+// Import react-leaflet dynamically to prevent SSR issues with the global window object
+const MapContainer = dynamic(() => import("react-leaflet").then(mod => mod.MapContainer), { ssr: false, loading: () => <MapLoading /> });
+const TileLayer = dynamic(() => import("react-leaflet").then(mod => mod.TileLayer), { ssr: false });
+const Marker = dynamic(() => import("react-leaflet").then(mod => mod.Marker), { ssr: false });
+const Popup = dynamic(() => import("react-leaflet").then(mod => mod.Popup), { ssr: false });
+const GeoJSON = dynamic(() => import("react-leaflet").then(mod => mod.GeoJSON), { ssr: false });
+const MapClickTracker = dynamic(() => import("./MapClickTracker"), { ssr: false });
+
+function MapLoading() {
+    return (
+        <div className="w-full h-[600px] bg-slate-100 dark:bg-[#151b2b] rounded-2xl flex flex-col items-center justify-center border border-slate-200 dark:border-[#2a3040]">
+            <Loader2 className="w-8 h-8 text-blue-500 animate-spin mb-4" />
+            <p className="text-slate-500 font-medium">Loading Map...</p>
+        </div>
+    );
+}
+
+// Leaflet icon fix for Next.js - handled inside a useEffect
+let DefaultIcon: any;
+let SafeIcon: any;
+let RiskIcon: any;
+
+export function HouseholdMapView() {
+    const { households, searchQuery, selectedBarangay, selectedRiskLevel, viewMode } = useHousehold();
+    const [mounted, setMounted] = useState(false);
+    const [iconsLoaded, setIconsLoaded] = useState(false);
+    const [agnoBorder, setAgnoBorder] = useState<any>(null);
+
+    useEffect(() => {
+        // Fetch Agno Border GeoJSON
+        fetch('/agno-border.json')
+            .then(res => res.json())
+            .then(data => setAgnoBorder(data))
+            .catch(err => console.error("Failed to load Agno border:", err));
+
+        setMounted(true);
+        // We only require leaflet dynamically on the client side
+        import("leaflet").then(L => {
+            // Fix default icon path issues
+            delete (L.Icon.Default.prototype as any)._getIconUrl;
+            L.Icon.Default.mergeOptions({
+                iconRetinaUrl: 'https://unpkg.com/leaflet@1.9.4/dist/images/marker-icon-2x.png',
+                iconUrl: 'https://unpkg.com/leaflet@1.9.4/dist/images/marker-icon.png',
+                shadowUrl: 'https://unpkg.com/leaflet@1.9.4/dist/images/marker-shadow.png',
+            });
+
+            // Create custom icons based on risk level
+            SafeIcon = new L.Icon({
+                iconUrl: 'https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-blue.png',
+                shadowUrl: 'https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-shadow.png',
+                iconSize: [25, 41],
+                iconAnchor: [12, 41],
+                popupAnchor: [1, -34],
+                shadowSize: [41, 41]
+            });
+
+            RiskIcon = new L.Icon({
+                iconUrl: 'https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-red.png',
+                shadowUrl: 'https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-shadow.png',
+                iconSize: [25, 41],
+                iconAnchor: [12, 41],
+                popupAnchor: [1, -34],
+                shadowSize: [41, 41]
+            });
+
+            DefaultIcon = SafeIcon;
+            setIconsLoaded(true);
+        });
+    }, []);
+
+    // Do not render map if in list view or if not mounted (SSR check)
+    if (!mounted || !iconsLoaded || viewMode === "list") return <MapLoading />;
+
+    // Filter logic
+    const filteredHouseholds = households.filter((h) => {
+        const matchesSearch = h.headOfFamily.toLowerCase().includes(searchQuery.toLowerCase()) ||
+            h.barangay.toLowerCase().includes(searchQuery.toLowerCase());
+        const matchesBarangay = selectedBarangay === "All" || h.barangay === selectedBarangay;
+        const matchesRisk = selectedRiskLevel === "All" || h.riskLevel === selectedRiskLevel;
+        return matchesSearch && matchesBarangay && matchesRisk;
+    });
+
+    // Default center to Agno, Pangasinan if no data
+    const centerLat = filteredHouseholds.length > 0 ? filteredHouseholds[0].latitude : 16.1158;
+    const centerLng = filteredHouseholds.length > 0 ? filteredHouseholds[0].longitude : 119.7997;
+
+    return (
+        <div className="w-full bg-white dark:bg-[#151b2b] p-4 rounded-2xl border border-slate-200 dark:border-[#2a3040] shadow-sm relative z-0">
+            {/* Adding leaflet CSS dynamically */}
+            <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+
+            <div className="overflow-hidden rounded-xl border border-slate-200 dark:border-[#2a3040]">
+                <MapContainer
+                    center={[centerLat, centerLng] as [number, number]}
+                    zoom={13}
+                    style={{ height: '600px', width: '100%', zIndex: 0 }}
+                >
+                    <TileLayer
+                        attribution='Tiles &copy; Esri &mdash; Source: Esri, i-cubed, USDA, USGS, AEX, GeoEye, Getmapping, Aerogrid, IGN, IGP, UPR-EGP, and the GIS User Community'
+                        url="https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}"
+                    />
+
+                    {agnoBorder && (
+                        <GeoJSON
+                            data={agnoBorder}
+                            style={{
+                                color: '#3b82f6',
+                                weight: 2,
+                                opacity: 0.8,
+                                fillOpacity: 0.05
+                            }}
+                        />
+                    )}
+
+                    <MapClickTracker />
+
+                    {filteredHouseholds.map((h) => {
+                        const isRisk = ["High Risk", "Flood Prone", "Landslide Prone"].includes(h.riskLevel);
+                        const iconToUse = isRisk && RiskIcon ? RiskIcon : (SafeIcon || undefined);
+
+                        return (
+                            <Marker
+                                key={h.id}
+                                position={[h.latitude, h.longitude]}
+                                icon={iconToUse}
+                            >
+                                <Popup className="custom-popup">
+                                    <div className="p-1 min-w-[200px]">
+                                        <div className="flex items-center gap-2 mb-2 pb-2 border-b border-slate-100">
+                                            {isRisk ? (
+                                                <AlertTriangle className="w-4 h-4 text-red-500" />
+                                            ) : (
+                                                <ShieldCheck className="w-4 h-4 text-emerald-500" />
+                                            )}
+                                            <h3 className="font-bold text-slate-800 m-0">{h.headOfFamily}</h3>
+                                        </div>
+
+                                        <div className="space-y-1.5 text-sm mb-3">
+                                            <div className="flex justify-between">
+                                                <span className="text-slate-500">Barangay:</span>
+                                                <span className="font-semibold text-slate-700">{h.barangay}</span>
+                                            </div>
+                                            <div className="flex justify-between items-center">
+                                                <span className="text-slate-500">Household:</span>
+                                                <span className="font-semibold text-slate-700 flex items-center bg-slate-100 px-2 rounded-md">
+                                                    <Users className="w-3 h-3 mr-1" /> {h.householdSize}
+                                                </span>
+                                            </div>
+                                            <div className="flex justify-between">
+                                                <span className="text-slate-500">Risk Level:</span>
+                                                <span className={`font-semibold ${isRisk ? 'text-red-600' : 'text-emerald-600'}`}>{h.riskLevel}</span>
+                                            </div>
+                                            {h.contactNumber && (
+                                                <div className="flex justify-between items-center pt-1 border-t border-slate-100 mt-1">
+                                                    <span className="text-slate-500"><Phone className="w-3 h-3" /></span>
+                                                    <span className="font-semibold text-slate-700">{h.contactNumber}</span>
+                                                </div>
+                                            )}
+                                        </div>
+
+                                        {h.specialSectors && (
+                                            <div className="bg-purple-50 text-purple-700 text-xs px-2 py-1 rounded border border-purple-100 mb-2">
+                                                <strong>Notes:</strong> {h.specialSectors}
+                                            </div>
+                                        )}
+                                    </div>
+                                </Popup>
+                            </Marker>
+                        );
+                    })}
+                </MapContainer>
+            </div>
+
+            <div className="mt-4 flex gap-4 text-sm bg-slate-50 dark:bg-[#1a1f2e] p-3 rounded-xl border border-slate-100 dark:border-[#2a3040]">
+                <div className="flex items-center">
+                    <div className="w-3 h-3 rounded-full bg-blue-500 mr-2 shadow-sm"></div>
+                    <span className="font-medium text-slate-600 dark:text-slate-300">Safe / Low Risk</span>
+                </div>
+                <div className="flex items-center">
+                    <div className="w-3 h-3 rounded-full bg-red-500 mr-2 shadow-sm"></div>
+                    <span className="font-medium text-slate-600 dark:text-slate-300">High Risk / Hazard Prone</span>
+                </div>
+            </div>
+        </div>
+    );
+}

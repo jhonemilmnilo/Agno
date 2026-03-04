@@ -796,3 +796,68 @@ export async function toggleProjectStatus(id: string, isPublished: boolean) {
         return { success: false, error: "Failed to update project publication status." };
     }
 }
+// ----------------------------------------
+// HOUSEHOLD MAP ACTIONS (Admin Only)
+// ----------------------------------------
+
+export async function addHousehold(formData: FormData) {
+    try {
+        const household = await prisma.household.create({
+            data: {
+                headOfFamily: formData.get("headOfFamily") as string,
+                barangay: formData.get("barangay") as string,
+                latitude: parseFloat(formData.get("latitude") as string),
+                longitude: parseFloat(formData.get("longitude") as string),
+                householdSize: parseInt(formData.get("householdSize") as string, 10),
+                contactNumber: (formData.get("contactNumber") as string) || null,
+                riskLevel: (formData.get("riskLevel") as string) || "Safe",
+                specialSectors: (formData.get("specialSectors") as string) || null,
+                notes: (formData.get("notes") as string) || null,
+            }
+        });
+
+        revalidatePath("/admin/households");
+        return { success: true, household };
+    } catch (error) {
+        console.error("Failed to add household:", error);
+        return { success: false, error: "Failed to create household entry." };
+    }
+}
+
+export async function updateHousehold(id: string, formData: FormData) {
+    try {
+        const household = await prisma.household.update({
+            where: { id },
+            data: {
+                headOfFamily: formData.get("headOfFamily") as string,
+                barangay: formData.get("barangay") as string,
+                latitude: parseFloat(formData.get("latitude") as string),
+                longitude: parseFloat(formData.get("longitude") as string),
+                householdSize: parseInt(formData.get("householdSize") as string, 10),
+                contactNumber: (formData.get("contactNumber") as string) || null,
+                riskLevel: (formData.get("riskLevel") as string) || "Safe",
+                specialSectors: (formData.get("specialSectors") as string) || null,
+                notes: (formData.get("notes") as string) || null,
+            }
+        });
+
+        revalidatePath("/admin/households");
+        return { success: true, household };
+    } catch (error) {
+        console.error("Failed to update household:", error);
+        return { success: false, error: "Failed to update household entry." };
+    }
+}
+
+export async function deleteHousehold(id: string) {
+    try {
+        await prisma.household.delete({
+            where: { id }
+        });
+        revalidatePath("/admin/households");
+        return { success: true };
+    } catch (error) {
+        console.error("Failed to delete household:", error);
+        return { success: false, error: "Failed to delete household entry." };
+    }
+}

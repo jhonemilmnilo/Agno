@@ -2,14 +2,28 @@
 
 import { useTourism } from "../providers/TourismProvider";
 import { Search, Plus, Filter } from "lucide-react";
+import { useState, useEffect } from "react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 
 export function TourismFilters() {
     const { searchTerm, setSearchTerm, setIsAddModalOpen, selectedCategory, setSelectedCategory } = useTourism();
+    const [mounted, setMounted] = useState(false);
+
+    useEffect(() => {
+        setMounted(true);
+    }, []);
 
     const categories = ["All", "Beach", "Falls", "Island", "Historical", "Park", "Other"];
+
+    if (!mounted) {
+        return (
+            <div className="p-4 flex flex-col lg:flex-row items-center justify-between gap-4 border-b border-slate-200 dark:border-[#2a3040] bg-slate-50/50 dark:bg-[#151b2b]">
+                <div className="h-11 w-full bg-slate-100 dark:bg-slate-800 animate-pulse rounded-xl"></div>
+            </div>
+        );
+    }
 
     return (
         <div className="p-4 flex flex-col lg:flex-row items-center justify-between gap-4 border-b border-slate-200 dark:border-[#2a3040] bg-slate-50/50 dark:bg-[#151b2b]">
