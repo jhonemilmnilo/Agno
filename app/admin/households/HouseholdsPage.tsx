@@ -16,21 +16,25 @@ export function HouseholdsPage() {
 
     return (
         <div className="p-4 md:p-8 space-y-6 md:space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-700">
-            {/* Header */}
-            <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 bg-white dark:bg-[#151b2b] p-6 md:p-8 rounded-2xl border border-slate-200 dark:border-[#2a3040] shadow-sm relative overflow-hidden">
-                <div className="absolute top-0 right-0 w-64 h-64 bg-blue-500/5 rounded-full blur-3xl -mr-20 -mt-20"></div>
-                <div className="relative z-10">
-                    <h1 className="text-3xl md:text-4xl font-black text-slate-900 dark:text-white tracking-tight flex items-center gap-3">
-                        <div className="p-3 bg-blue-100 dark:bg-blue-500/20 rounded-xl">
-                            <Map className="w-8 h-8 text-blue-600 dark:text-blue-400" />
-                        </div>
+            {/* Header Section */}
+            <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
+                <div>
+                    <div className="flex items-center space-x-2 text-slate-500 dark:text-slate-400 text-xs mb-2 bg-slate-100 dark:bg-slate-800/50 w-fit px-3 py-1.5 rounded-full border border-slate-200 dark:border-slate-700/50">
+                        <Home size={12} className="text-blue-500" />
+                        <span className="opacity-50">/</span>
+                        <span>Management</span>
+                        <span className="opacity-50">/</span>
+                        <span className="text-blue-600 dark:text-blue-400 font-bold">Household Registry</span>
+                    </div>
+                    <h1 className="text-4xl font-black text-slate-900 dark:text-white tracking-tighter uppercase italic flex items-center">
+                        <Map className="mr-3 text-blue-600 w-10 h-10" />
                         Household Map
                     </h1>
-                    <p className="text-slate-500 dark:text-slate-400 mt-2 text-lg max-w-2xl font-medium">
+                    <p className="text-slate-500 dark:text-slate-400 mt-1 font-medium max-w-2xl">
                         Manage and visualize every household in Agno for resource distribution, risk assessment, and census tracking.
                     </p>
                 </div>
-                <div className="flex gap-3 relative z-10 w-full md:w-auto">
+                <div className="flex gap-3 w-full md:w-auto">
                     <Button
                         onClick={() => setIsAddModalOpen(true)}
                         className="w-full md:w-auto bg-blue-600 hover:bg-blue-700 text-white shadow-lg shadow-blue-500/20 h-12 px-6 rounded-xl font-bold transition-all hover:scale-[1.02]"
@@ -44,7 +48,7 @@ export function HouseholdsPage() {
             <div className="space-y-6">
                 <HouseholdCards />
 
-                <div className="bg-white dark:bg-[#151b2b] p-6 rounded-2xl border border-slate-200 dark:border-[#2a3040] shadow-sm">
+                <div className="bg-white dark:bg-[#151b2b] p-6 rounded-3xl border border-slate-200 dark:border-[#2a3040] shadow-2xl shadow-blue-500/5 overflow-hidden ring-1 ring-slate-200 dark:ring-white/5">
                     <HouseholdFilters />
 
                     {viewMode === "map" ? (

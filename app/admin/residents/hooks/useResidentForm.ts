@@ -1,0 +1,57 @@
+import { useState } from "react";
+import { addResident, updateResident } from "../../actions";
+import { toast } from "sonner";
+import { useResident } from "../providers";
+
+export function useResidentForm() {
+    const [loading, setLoading] = useState(false);
+    const [imageFile, setImageFile] = useState<File | null>(null);
+    const { setIsAddModalOpen, editingData, setResidents } = useResident();
+
+    const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+        e.preventDefault();
+        setLoading(true);
+
+        const formData = new FormData(e.currentTarget);
+
+        if (imageFile) {
+            formData.append("imageFile", imageFile);
+        } else if (editingData?.imageUrl) {
+            formData.append("imageUrl", editingData.imageUrl);
+        }
+
+        try {
+            if (editingData) {
+                const response = await updateResident(editingData.id, formData);
+                if (response.success && response.data) {
+                    setResidents(prev => prev.map(r => r.id === editingData.id ? response.data as any : r));
+                    toast.success("Resident profile updated successfully!");
+                    setIsAddModalOpen(false);
+                } else {
+                    toast.error(response.error || "Failed to update resident.");
+                }
+            } else {
+                const response = await addResident(formData);
+                if (response.success && response.data) {
+                    setResidents(prev => [response.data as any, ...prev]);
+                    toast.success("New resident registered successfully!");
+                    setIsAddModalOpen(false);
+                } else {
+                    toast.error(response.error || "Failed to register resident.");
+                }
+            }
+        } catch (error) {
+            toast.error("An unexpected error occurred.");
+            console.error(error);
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    return {
+        handleSubmit,
+        loading,
+        imageFile,
+        setImageFile,
+    };
+}

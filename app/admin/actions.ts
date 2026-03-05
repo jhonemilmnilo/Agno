@@ -861,3 +861,92 @@ export async function deleteHousehold(id: string) {
         return { success: false, error: "Failed to delete household entry." };
     }
 }
+
+// ==========================================
+// RESIDENT REGISTRATION ACTIONS
+// ==========================================
+
+export async function addResident(formData: FormData) {
+    try {
+        const imageUrl = await processImageUpload(formData);
+
+        const resident = await prisma.resident.create({
+            data: {
+                firstName: formData.get("firstName") as string,
+                lastName: formData.get("lastName") as string,
+                middleName: formData.get("middleName") as string || null,
+                dateOfBirth: new Date(formData.get("dateOfBirth") as string),
+                gender: formData.get("gender") as string,
+                civilStatus: formData.get("civilStatus") as string,
+                bloodType: formData.get("bloodType") as string || null,
+                contactNumber: formData.get("contactNumber") as string || null,
+                email: formData.get("email") as string || null,
+                barangay: formData.get("barangay") as string,
+                address: formData.get("address") as string,
+                occupation: formData.get("occupation") as string || null,
+                emergencyContactName: formData.get("emergencyContactName") as string || null,
+                emergencyContactNumber: formData.get("emergencyContactNumber") as string || null,
+                imageUrl: imageUrl,
+            }
+        });
+
+        revalidatePath("/admin/residents");
+        return { success: true, data: resident };
+    } catch (error) {
+        console.error("Error adding resident:", error);
+        return { success: false, error: "Failed to add resident" };
+    }
+}
+
+export async function updateResident(id: string, formData: FormData) {
+    try {
+        const imageUrl = await processImageUpload(formData);
+
+        const dataToUpdate: any = {
+            firstName: formData.get("firstName") as string,
+            lastName: formData.get("lastName") as string,
+            middleName: formData.get("middleName") as string || null,
+            dateOfBirth: new Date(formData.get("dateOfBirth") as string),
+            gender: formData.get("gender") as string,
+            civilStatus: formData.get("civilStatus") as string,
+            bloodType: formData.get("bloodType") as string || null,
+            contactNumber: formData.get("contactNumber") as string || null,
+            email: formData.get("email") as string || null,
+            barangay: formData.get("barangay") as string,
+            address: formData.get("address") as string,
+            occupation: formData.get("occupation") as string || null,
+            emergencyContactName: formData.get("emergencyContactName") as string || null,
+            emergencyContactNumber: formData.get("emergencyContactNumber") as string || null,
+        };
+
+        if (imageUrl !== null) {
+            dataToUpdate.imageUrl = imageUrl;
+        }
+
+        const resident = await prisma.resident.update({
+            where: { id },
+            data: dataToUpdate
+        });
+
+        revalidatePath("/admin/residents");
+        return { success: true, data: resident };
+    } catch (error) {
+        console.error("Error updating resident:", error);
+        return { success: false, error: "Failed to update resident" };
+    }
+}
+
+export async function deleteResident(id: string) {
+    try {
+        await prisma.resident.delete({
+            where: { id }
+        });
+
+        revalidatePath("/admin/residents");
+        return { success: true };
+    } catch (error) {
+        console.error("Error deleting resident:", error);
+        return { success: false, error: "Failed to delete resident" };
+    }
+}
+

@@ -29,6 +29,7 @@ export function Sidebar({ session }: SidebarProps) {
         { href: "/admin/jobs", label: "Job Postings", icon: Briefcase },
         { href: "/admin/officials", label: "Council Members", icon: Users },
         { href: "/admin/hotlines", label: "Hotlines", icon: Phone },
+        { href: "/admin/residents", label: "Resident Registry", icon: Users, category: "Citizens & Services" },
         { href: "/admin/households", label: "Household Map", icon: MapPin, category: "Data & Analysis" },
     ];
 

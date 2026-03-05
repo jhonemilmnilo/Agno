@@ -10,6 +10,7 @@ import {
     DialogDescription,
     DialogHeader,
     DialogTitle,
+    DialogFooter
 } from "@/components/ui/dialog";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
@@ -43,17 +44,21 @@ export function AddAccommodationModal() {
             <DialogContent className="sm:max-w-5xl p-0 overflow-hidden bg-slate-50 dark:bg-[#0f1117] border-slate-200 dark:border-[#2a3040] shadow-2xl rounded-2xl">
                 <div className="flex flex-col h-[90vh] sm:h-auto sm:max-h-[85vh]">
                     {/* Header */}
-                    <div className="px-6 py-5 border-b border-slate-200 dark:border-[#2a3040] bg-white dark:bg-[#151b2b] sticky top-0 z-10">
-                        <DialogHeader>
-                            <DialogTitle className="text-xl font-semibold text-slate-800 dark:text-slate-100 flex items-center">
-                                <Building2 className="w-5 h-5 mr-2 text-blue-600 dark:text-blue-500" />
-                                {editingData ? "Edit Tuluyan Details" : "Add New Accommodation"}
-                            </DialogTitle>
-                            <p className="text-slate-500 dark:text-slate-400 mt-1.5 text-sm">
-                                {editingData ? "Modify the details of this stay listing below." : "Enter the details for the new stay listing below. It will be published immediately after submission."}
-                            </p>
-                        </DialogHeader>
-                    </div>
+                    <DialogHeader className="p-8 pb-4 bg-slate-50/50 dark:bg-[#151b2b] sticky top-0 z-50 border-b border-slate-200 dark:border-[#2a3040]">
+                        <div className="flex items-center space-x-3 mb-1">
+                            <div className="p-2 bg-blue-600 rounded-lg shadow-lg shadow-blue-500/20">
+                                <Building2 className="w-5 h-5 text-white" />
+                            </div>
+                            <div>
+                                <DialogTitle className="text-2xl font-black text-slate-900 dark:text-white uppercase tracking-tight">
+                                    {editingData ? "Edit Tuluyan Details" : "Add New Accommodation"}
+                                </DialogTitle>
+                                <DialogDescription className="text-slate-500 dark:text-slate-400 font-medium">
+                                    {editingData ? "Modify the details of this stay listing below." : "Enter the details for the new stay listing below. It will be published immediately."}
+                                </DialogDescription>
+                            </div>
+                        </div>
+                    </DialogHeader>
 
                     {/* Scrollable Form Body */}
                     <div className="p-6 overflow-y-auto custom-scrollbar">
@@ -196,11 +201,21 @@ export function AddAccommodationModal() {
                     </div>
 
                     {/* Footer Actions */}
-                    <div className="p-6 pt-4 border-t border-slate-200 dark:border-[#2a3040] bg-white dark:bg-[#151b2b] shrink-0 flex justify-end gap-3 rounded-b-2xl">
-                        <Button type="button" variant="ghost" onClick={() => setIsAddModalOpen(false)} className="text-slate-700 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-[#2a3040] font-medium px-6">
+                    <DialogFooter className="p-8 bg-white dark:bg-[#151b2b] sticky bottom-0 z-50 border-t border-slate-200 dark:border-[#2a3040] flex justify-end gap-3 rounded-b-2xl">
+                        <Button
+                            type="button"
+                            variant="ghost"
+                            onClick={() => setIsAddModalOpen(false)}
+                            className="h-12 px-8 font-bold text-slate-500 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-xl"
+                        >
                             Cancel
                         </Button>
-                        <Button type="submit" form="accommodationForm" disabled={loading} className="bg-blue-600 hover:bg-blue-700 text-white font-bold px-8 shadow-lg shadow-blue-500/20 flex items-center h-11 rounded-xl">
+                        <Button
+                            type="submit"
+                            form="accommodationForm"
+                            disabled={loading}
+                            className="h-12 px-10 bg-blue-600 hover:bg-blue-700 text-white font-bold shadow-lg shadow-blue-500/20 rounded-xl transition-all hover:scale-[1.02] active:scale-[0.98]"
+                        >
                             {loading ? (
                                 "Saving..."
                             ) : (
@@ -210,7 +225,7 @@ export function AddAccommodationModal() {
                                 </>
                             )}
                         </Button>
-                    </div>
+                    </DialogFooter>
                 </div>
             </DialogContent>
         </Dialog>
