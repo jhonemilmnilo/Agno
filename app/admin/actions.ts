@@ -950,3 +950,111 @@ export async function deleteResident(id: string) {
     }
 }
 
+// ----------------------------------------
+// DISASTER HAZARD MAPPING ACTIONS
+// ----------------------------------------
+
+export async function getDisasterZones() {
+    try {
+        const zoneDelegate = (prisma as any).disasterZone;
+        if (!zoneDelegate) {
+            console.warn("disasterZone delegate missing on prisma instance");
+            return { success: false, error: "Database model not recognized yet." };
+        }
+        const zones = await zoneDelegate.findMany({
+            orderBy: { createdAt: "desc" }
+        });
+        return { success: true, zones };
+    } catch (error) {
+        console.error("Failed to fetch disaster zones:", error);
+        return { success: false, error: "Failed to fetch disaster zones." };
+    }
+}
+
+export async function addDisasterZone(data: {
+    type: string;
+    typeColor: string;
+    riskLevel: string;
+    riskColor: string;
+    north: number;
+    south: number;
+    east: number;
+    west: number;
+}) {
+    try {
+        const zoneDelegate = (prisma as any).disasterZone;
+        if (!zoneDelegate) throw new Error("disasterZone model not found");
+
+        const zone = await zoneDelegate.create({
+            data: {
+                type: data.type,
+                typeColor: data.typeColor,
+                riskLevel: data.riskLevel,
+                riskColor: data.riskColor,
+                north: data.north,
+                south: data.south,
+                east: data.east,
+                west: data.west,
+            }
+        });
+
+        revalidatePath("/admin/disasters");
+        return { success: true, zone };
+    } catch (error) {
+        console.error("Failed to add disaster zone:", error);
+        return { success: false, error: "Failed to create disaster zone." };
+    }
+}
+
+export async function updateDisasterZone(id: string, data: {
+    type: string;
+    typeColor: string;
+    riskLevel: string;
+    riskColor: string;
+    north: number;
+    south: number;
+    east: number;
+    west: number;
+}) {
+    try {
+        const zoneDelegate = (prisma as any).disasterZone;
+        if (!zoneDelegate) throw new Error("disasterZone model not found");
+
+        const zone = await zoneDelegate.update({
+            where: { id },
+            data: {
+                type: data.type,
+                typeColor: data.typeColor,
+                riskLevel: data.riskLevel,
+                riskColor: data.riskColor,
+                north: data.north,
+                south: data.south,
+                east: data.east,
+                west: data.west,
+            }
+        });
+
+        revalidatePath("/admin/disasters");
+        return { success: true, zone };
+    } catch (error) {
+        console.error("Failed to update disaster zone:", error);
+        return { success: false, error: "Failed to update disaster zone." };
+    }
+}
+
+export async function deleteDisasterZone(id: string) {
+    try {
+        const zoneDelegate = (prisma as any).disasterZone;
+        if (!zoneDelegate) throw new Error("disasterZone model not found");
+
+        await zoneDelegate.delete({
+            where: { id }
+        });
+        revalidatePath("/admin/disasters");
+        return { success: true };
+    } catch (error) {
+        console.error("Failed to delete disaster zone:", error);
+        return { success: false, error: "Failed to delete disaster zone." };
+    }
+}
+

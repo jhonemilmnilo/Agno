@@ -268,4 +268,19 @@ model Resident {
   updatedAt              DateTime  @updatedAt
 }
 
-
+model DisasterZone {
+  id          String   @id @default(cuid())
+  type        String   // e.g. "Flood", "Landslide", "Storm Surge"
+  typeColor   String   // The identifying color for the disaster type (Hex)
+  riskLevel   String   // e.g. "Low", "Medium", "High"
+  riskColor   String   // The severity color (Hex)
+  
+  // Box Geometry (Leaflet Rectangle bounds)
+  north       Float
+  south       Float
+  east        Float
+  west        Float
+  
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
