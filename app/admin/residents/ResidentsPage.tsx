@@ -1,14 +1,12 @@
 "use client";
 
-import { ResidentProvider } from "./providers";
 import {
     ResidentCards,
     ResidentFilters,
     ResidentTable,
     AddResidentModal
 } from "./components";
-import { Users, FileCheck, Home } from "lucide-react";
-import { Button } from "@/components/ui/button";
+import { Home } from "lucide-react";
 
 export function ResidentsPage() {
     return (

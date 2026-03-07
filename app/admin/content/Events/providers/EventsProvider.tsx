@@ -2,23 +2,42 @@
 
 import { createContext, useContext, useState, useEffect, ReactNode } from "react";
 
+export interface Event {
+    id: string;
+    title: string;
+    description: string | null;
+    category: string;
+    startDate: Date;
+    endDate: Date;
+    venueName: string;
+    address: string;
+    contactNumber: string | null;
+    imageUrl: string | null;
+    latitude: number | null;
+    longitude: number | null;
+    googleMapsUrl: string | null;
+    isPublished: boolean;
+    createdAt: Date;
+    updatedAt: Date;
+}
+
 interface EventsContextType {
-    events: any[];
-    setEvents: (data: any[]) => void;
+    events: Event[];
+    setEvents: (data: Event[]) => void;
     searchTerm: string;
     setSearchTerm: (term: string) => void;
     isAddModalOpen: boolean;
     setIsAddModalOpen: (open: boolean) => void;
-    editingData: any | null;
-    setEditingData: (data: any | null) => void;
+    editingData: Event | null;
+    setEditingData: (data: Event | null) => void;
     selectedCategory: string;
     setSelectedCategory: (category: string) => void;
 }
 
 const EventsContext = createContext<EventsContextType | undefined>(undefined);
 
-export function EventsProvider({ children, initialData }: { children: ReactNode; initialData: any[] }) {
-    const [events, setEvents] = useState(initialData);
+export function EventsProvider({ children, initialData }: { children: ReactNode; initialData: Event[] }) {
+    const [events, setEvents] = useState<Event[]>(initialData);
     const [searchTerm, setSearchTerm] = useState("");
     const [isAddModalOpen, setIsAddModalOpen] = useState(false);
     const [editingData, setEditingData] = useState<any | null>(null);

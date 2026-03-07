@@ -1,7 +1,8 @@
 "use client";
 
 import { motion } from "framer-motion";
-import { useTourism } from "../providers/TourismProvider";
+import { useTourism, Tourism } from "../providers/TourismProvider";
+import Image from "next/image";
 import { MapPin, MoreHorizontal, Map as MapIcon, Trash, EyeOff, Eye, Globe, Camera } from "lucide-react";
 import { deleteTourismSpot, toggleTourismSpotStatus } from "@/app/admin/actions";
 import {
@@ -26,7 +27,7 @@ import {
 export function TourismTable() {
     const { tourismData, searchTerm, setEditingData, setIsAddModalOpen, selectedCategory } = useTourism();
 
-    const filteredData = tourismData.filter((item: any) => {
+    const filteredData = tourismData.filter((item: Tourism) => {
         const matchesSearch = item.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
             item.address.toLowerCase().includes(searchTerm.toLowerCase());
         const matchesCategory = selectedCategory === "All" || item.category === selectedCategory;
@@ -58,7 +59,7 @@ export function TourismTable() {
                             </TableCell>
                         </TableRow>
                     ) : (
-                        filteredData.map((item: any, index: number) => (
+                        filteredData.map((item: Tourism, index: number) => (
                             <motion.tr
                                 key={item.id}
                                 initial={{ opacity: 0, x: -10 }}
@@ -68,9 +69,9 @@ export function TourismTable() {
                             >
                                 <TableCell className="pl-6 py-4">
                                     <div className="flex items-center space-x-4">
-                                        <div className="w-14 h-14 rounded-xl bg-slate-100 dark:bg-slate-800 flex-shrink-0 overflow-hidden border border-slate-200 dark:border-[#2a3040]">
+                                        <div className="relative w-14 h-14 rounded-xl bg-slate-100 dark:bg-slate-800 flex-shrink-0 overflow-hidden border border-slate-200 dark:border-[#2a3040]">
                                             {item.imageUrl ? (
-                                                <img src={item.imageUrl} alt={item.name} className="w-full h-full object-cover" />
+                                                <Image src={item.imageUrl} alt={item.name} layout="fill" objectFit="cover" />
                                             ) : (
                                                 <div className="w-full h-full flex items-center justify-center">
                                                     <Camera className="w-5 h-5 text-slate-400" />
@@ -146,7 +147,7 @@ export function TourismTable() {
                                                     className="text-slate-700 dark:text-slate-300 focus:bg-slate-100 dark:focus:bg-[#2a3040] focus:text-slate-900 dark:focus:text-white cursor-pointer rounded-md mx-1 my-1 flex items-center font-medium"
                                                     onClick={() => {
                                                         const url = item.googleMapsUrl || `https://www.google.com/maps/search/?api=1&query=${item.latitude},${item.longitude}`;
-                                                        window.open(url, "_blank");
+                                                        window.open(url as string, "_blank");
                                                     }}
                                                 >
                                                     <MapIcon className="w-4 h-4 mr-2 text-blue-500" /> Open in Maps

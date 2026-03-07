@@ -1,6 +1,6 @@
 "use client";
 
-import { JobsProvider } from "./providers";
+import { JobsProvider, Job } from "./providers/JobsProvider";
 import {
     JobsCards,
     JobsFilters,
@@ -9,8 +9,9 @@ import {
 } from "./components";
 import { Home, Briefcase } from "lucide-react";
 
+
 interface JobsPageProps {
-    initialData: any[];
+    initialData: Job[];
 }
 
 export function JobsPage({ initialData }: JobsPageProps) {

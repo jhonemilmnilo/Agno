@@ -4,14 +4,20 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import {
     LayoutDashboard, Users, Newspaper,
-    Briefcase, Image as ImageIcon, MapPin, Map,
-    UtensilsCrossed, Calendar, Phone, FolderKanban, ShieldCheck, Contact, BedDouble, AlertTriangle, Settings, LogOut, ShieldAlert
+    Briefcase, MapPin, Map,
+    UtensilsCrossed, Calendar, Phone, FolderKanban, BedDouble, AlertTriangle, Settings, ShieldAlert
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { ThemeToggle } from "@/components/ThemeToggle";
 
 interface SidebarProps {
-    session: any;
+    session: {
+        user?: {
+            name?: string | null;
+            email?: string | null;
+            image?: string | null;
+        };
+    };
 }
 
 export function Sidebar({ session }: SidebarProps) {
@@ -49,7 +55,7 @@ export function Sidebar({ session }: SidebarProps) {
                 </div>
 
                 <nav className="px-4 space-y-1">
-                    {menuItems.map((item, index) => {
+                    {menuItems.map((item) => {
                         const isActive = pathname === item.href;
                         const Icon = item.icon;
 

@@ -25,12 +25,11 @@ export function AddEventModal() {
     const fileInputRef = useRef<HTMLInputElement>(null);
 
     useEffect(() => {
-        if (editingData?.imageUrl) {
-            setImagePreview(editingData.imageUrl);
-        } else {
-            setImagePreview(null);
+        const url = editingData?.imageUrl || null;
+        if (imagePreview !== url) {
+            setImagePreview(url);
         }
-    }, [editingData]);
+    }, [editingData, imagePreview]);
 
     const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const file = e.target.files?.[0];
@@ -46,9 +45,9 @@ export function AddEventModal() {
     const categories = ["Festival", "Community", "Religious", "Sports", "Other"];
 
     // Format date for input[type="datetime-local"]
-    const formatDateForInput = (dateString: string | undefined) => {
-        if (!dateString) return "";
-        const date = new Date(dateString);
+    const formatDateForInput = (dateInput: Date | string | undefined) => {
+        if (!dateInput) return "";
+        const date = dateInput instanceof Date ? dateInput : new Date(dateInput);
         return date.toISOString().slice(0, 16);
     };
 
@@ -93,7 +92,7 @@ export function AddEventModal() {
                                         <Input
                                             name="title"
                                             required
-                                            defaultValue={editingData?.title}
+                                            defaultValue={editingData?.title || ""}
                                             placeholder="e.g. Agno Umbrella Festival 2024"
                                             className="h-12 bg-slate-50 dark:bg-[#1a1f2e] border-slate-200 dark:border-[#2a3040] focus:ring-2 focus:ring-blue-500/20"
                                         />
@@ -119,7 +118,7 @@ export function AddEventModal() {
                                             </Label>
                                             <Input
                                                 name="contactNumber"
-                                                defaultValue={editingData?.contactNumber}
+                                                defaultValue={editingData?.contactNumber || ""}
                                                 placeholder="e.g. 0912-345-6789"
                                                 className="h-12 bg-slate-50 dark:bg-[#1a1f2e] border-slate-200 dark:border-[#2a3040]"
                                             />
@@ -157,7 +156,7 @@ export function AddEventModal() {
                                         <Label className="text-slate-700 dark:text-slate-300 font-bold">Event Description</Label>
                                         <Textarea
                                             name="description"
-                                            defaultValue={editingData?.description}
+                                            defaultValue={editingData?.description || ""}
                                             placeholder="Provide more details about the event..."
                                             className="min-h-[120px] bg-slate-50 dark:bg-[#1a1f2e] border-slate-200 dark:border-[#2a3040] resize-none"
                                         />
@@ -176,7 +175,7 @@ export function AddEventModal() {
                                         <Input
                                             name="venueName"
                                             required
-                                            defaultValue={editingData?.venueName}
+                                            defaultValue={editingData?.venueName || ""}
                                             placeholder="e.g. Agno Municipal Plaza"
                                             className="h-12 bg-slate-50 dark:bg-[#1a1f2e] border-slate-200 dark:border-[#2a3040]"
                                         />
@@ -187,7 +186,7 @@ export function AddEventModal() {
                                         <Input
                                             name="address"
                                             required
-                                            defaultValue={editingData?.address}
+                                            defaultValue={editingData?.address || ""}
                                             placeholder="e.g. Poblacion, Agno"
                                             className="h-12 bg-slate-50 dark:bg-[#1a1f2e] border-slate-200 dark:border-[#2a3040]"
                                         />
@@ -200,7 +199,7 @@ export function AddEventModal() {
                                                 name="latitude"
                                                 type="number"
                                                 step="any"
-                                                defaultValue={editingData?.latitude}
+                                                defaultValue={editingData?.latitude || ""}
                                                 className="h-12 bg-slate-50 dark:bg-[#1a1f2e] border-slate-200 dark:border-[#2a3040]"
                                             />
                                         </div>
@@ -210,7 +209,7 @@ export function AddEventModal() {
                                                 name="longitude"
                                                 type="number"
                                                 step="any"
-                                                defaultValue={editingData?.longitude}
+                                                defaultValue={editingData?.longitude || ""}
                                                 className="h-12 bg-slate-50 dark:bg-[#1a1f2e] border-slate-200 dark:border-[#2a3040]"
                                             />
                                         </div>
@@ -222,7 +221,7 @@ export function AddEventModal() {
                                         </Label>
                                         <Input
                                             name="googleMapsUrl"
-                                            defaultValue={editingData?.googleMapsUrl}
+                                            defaultValue={editingData?.googleMapsUrl || ""}
                                             placeholder="https://goo.gl/maps/..."
                                             className="h-12 bg-slate-50 dark:bg-[#1a1f2e] border-slate-200 dark:border-[#2a3040]"
                                         />

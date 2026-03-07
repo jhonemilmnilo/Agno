@@ -16,7 +16,11 @@ export function ResidentFilters() {
     } = useResident();
 
     const [mounted, setMounted] = useState(false);
-    useEffect(() => setMounted(true), []);
+    useEffect(() => {
+        if (!mounted) {
+            setMounted(true);
+        }
+    }, [mounted]);
 
     const barangays = ["All", "Aloleng", "Bangan-Oda", "Baruan", "Boboy", "Cayungnan", "Dangley", "Gayusan", "Macaboboni", "Magsaysay", "Namuac", "Poblacion East", "Poblacion West", "Patar", "Sablig", "San Juan", "Tupa"];
     const genders = ["All", "Male", "Female", "Other"];

@@ -9,8 +9,10 @@ import {
 } from "./components";
 import { Home } from "lucide-react";
 
+import { Accommodation } from "./providers/AccommodationProvider";
+
 interface AccommodationPageProps {
-    initialData: any[];
+    initialData: Accommodation[];
 }
 
 export function AccommodationPage({ initialData }: AccommodationPageProps) {

@@ -2,15 +2,31 @@
 
 import { createContext, useContext, useState, useEffect, ReactNode } from "react";
 
+export interface Project {
+    id: string;
+    title: string;
+    description: string | null;
+    category: string;
+    status: string;
+    budget: number | null;
+    startDate: Date;
+    endDate: Date | null;
+    location: string | null;
+    imageUrl: string | null;
+    isPublished: boolean;
+    createdAt: Date;
+    updatedAt: Date;
+}
+
 interface ProjectsContextType {
-    projectsData: any[];
-    setProjectsData: (data: any[]) => void;
+    projectsData: Project[];
+    setProjectsData: (data: Project[]) => void;
     searchTerm: string;
     setSearchTerm: (term: string) => void;
     isAddModalOpen: boolean;
     setIsAddModalOpen: (open: boolean) => void;
-    editingData: any | null;
-    setEditingData: (data: any | null) => void;
+    editingData: Project | null;
+    setEditingData: (data: Project | null) => void;
     selectedCategory: string;
     setSelectedCategory: (category: string) => void;
     selectedStatus: string;
@@ -19,8 +35,8 @@ interface ProjectsContextType {
 
 const ProjectsContext = createContext<ProjectsContextType | undefined>(undefined);
 
-export function ProjectsProvider({ children, initialData }: { children: ReactNode; initialData: any[] }) {
-    const [projectsData, setProjectsData] = useState(initialData);
+export function ProjectsProvider({ children, initialData }: { children: ReactNode; initialData: Project[] }) {
+    const [projectsData, setProjectsData] = useState<Project[]>(initialData);
     const [searchTerm, setSearchTerm] = useState("");
     const [isAddModalOpen, setIsAddModalOpen] = useState(false);
     const [editingData, setEditingData] = useState<any | null>(null);

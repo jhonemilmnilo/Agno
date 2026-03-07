@@ -1,10 +1,11 @@
 "use client";
 
 import { useResident } from "../providers";
+import { Resident } from "../providers/ResidentProvider";
 import { deleteResident } from "../../actions";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Button } from "@/components/ui/button";
-import { Edit, Trash2, MapPin, Search, Phone } from "lucide-react";
+import { Edit, Trash2, Search, Phone } from "lucide-react";
 import { toast } from "sonner";
 import {
     AlertDialog,
@@ -42,11 +43,15 @@ export function ResidentTable() {
         return matchesSearch && matchesBarangay && matchesGender;
     });
 
+    const itemsPerPageOptions = [10, 20, 30, 50];
     const [currentPage, setCurrentPage] = useState(1);
     const [itemsPerPage, setItemsPerPage] = useState(10);
 
+    // Reset to page 1 when filters change - using state hook correctly
     useEffect(() => {
-        setCurrentPage(1);
+        if (currentPage !== 1) {
+            setCurrentPage(1);
+        }
     }, [searchQuery, selectedBarangay, selectedGender, itemsPerPage]);
 
     const totalPages = Math.ceil(filteredResidents.length / itemsPerPage);
@@ -66,7 +71,7 @@ export function ResidentTable() {
         }
     };
 
-    const handleEdit = (resident: any) => {
+    const handleEdit = (resident: Resident) => {
         setEditingData(resident);
         setIsAddModalOpen(true);
     };

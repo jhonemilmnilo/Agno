@@ -31,18 +31,13 @@ export function AddHouseholdModal() {
 
     useEffect(() => {
         if (isAddModalOpen) {
-            if (editingData) {
-                setLat(editingData.latitude?.toString() || "");
-                setLng(editingData.longitude?.toString() || "");
-            } else if (selectedCoords) {
-                setLat(selectedCoords.lat.toString());
-                setLng(selectedCoords.lng.toString());
-            } else {
-                setLat("");
-                setLng("");
-            }
+            const newLat = editingData ? (editingData.latitude?.toString() || "") : (selectedCoords ? selectedCoords.lat.toString() : "");
+            const newLng = editingData ? (editingData.longitude?.toString() || "") : (selectedCoords ? selectedCoords.lng.toString() : "");
+
+            if (lat !== newLat) setLat(newLat);
+            if (lng !== newLng) setLng(newLng);
         }
-    }, [isAddModalOpen, editingData, selectedCoords]);
+    }, [isAddModalOpen, editingData, selectedCoords, lat, lng]);
 
     const handleGetCurrentLocation = () => {
         if ("geolocation" in navigator) {

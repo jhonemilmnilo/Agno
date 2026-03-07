@@ -1,6 +1,6 @@
 "use client";
 
-import { TourismProvider } from "./providers";
+import { TourismProvider, Tourism } from "./providers/TourismProvider";
 import {
     TourismCards,
     TourismFilters,
@@ -9,8 +9,9 @@ import {
 } from "./components";
 import { Home } from "lucide-react";
 
+
 interface TourismPageProps {
-    initialData: any[];
+    initialData: Tourism[];
 }
 
 export function TourismPage({ initialData }: TourismPageProps) {

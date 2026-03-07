@@ -4,34 +4,13 @@ import React, { useState } from "react";
 import { Store, UploadCloud, Save } from "lucide-react";
 import { useDining } from "../providers/DiningProvider";
 import { useDiningForm } from "../hooks/useDiningForm";
-import { motion, AnimatePresence } from "framer-motion";
-import {
-    Dialog,
-    DialogContent,
-    DialogDescription,
-    DialogHeader,
-    DialogTitle,
-    DialogFooter
-} from "@/components/ui/dialog";
+import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 
-const containerVariants: import("framer-motion").Variants = {
-    hidden: { opacity: 0, scale: 0.95, y: 20 },
-    visible: {
-        opacity: 1,
-        scale: 1,
-        y: 0,
-        transition: {
-            duration: 0.4,
-            ease: [0.25, 1, 0.5, 1], // Custom spring-like cubic bezier
-            staggerChildren: 0.05
-        }
-    },
-    exit: { opacity: 0, scale: 0.95, y: 10, transition: { duration: 0.2 } }
-};
+// removed unused containerVariants
 
 export function AddDiningModal() {
     const { isAddModalOpen, setIsAddModalOpen, editingData, setEditingData } = useDining();
@@ -40,12 +19,11 @@ export function AddDiningModal() {
 
     // Sync preview with existing image when editing data changes
     React.useEffect(() => {
-        if (editingData?.imageUrl) {
-            setImagePreview(editingData.imageUrl);
-        } else {
-            setImagePreview(null);
+        const url = editingData?.imageUrl || null;
+        if (imagePreview !== url) {
+            setImagePreview(url);
         }
-    }, [editingData]);
+    }, [editingData, imagePreview]);
 
     return (
         <Dialog
@@ -89,13 +67,13 @@ export function AddDiningModal() {
                                         <Label htmlFor="name" className="text-xs font-semibold text-slate-700 dark:text-slate-300 mb-2 block">
                                             Dining Name <span className="text-red-500">*</span>
                                         </Label>
-                                        <Input id="name" name="name" defaultValue={editingData?.name} required className="bg-white dark:bg-[#0f1117] border-slate-300 dark:border-[#2a3040] text-slate-900 dark:text-white h-11" placeholder="e.g. Agno Seafood Restaurant" />
+                                        <Input id="name" name="name" defaultValue={editingData?.name || ""} required className="bg-white dark:bg-[#0f1117] border-slate-300 dark:border-[#2a3040] text-slate-900 dark:text-white h-11" placeholder="e.g. Agno Seafood Restaurant" />
                                     </div>
                                     <div>
                                         <Label htmlFor="cuisineType" className="text-xs font-semibold text-slate-700 dark:text-slate-300 mb-2 block">
                                             Cuisine Type / Category
                                         </Label>
-                                        <Input id="cuisineType" name="cuisineType" defaultValue={editingData?.cuisineType} className="bg-white dark:bg-[#0f1117] border-slate-300 dark:border-[#2a3040] text-slate-900 dark:text-white h-11" placeholder="Filipino, Seafood, Cafe..." />
+                                        <Input id="cuisineType" name="cuisineType" defaultValue={editingData?.cuisineType || ""} className="bg-white dark:bg-[#0f1117] border-slate-300 dark:border-[#2a3040] text-slate-900 dark:text-white h-11" placeholder="Filipino, Seafood, Cafe..." />
                                     </div>
                                 </div>
 
@@ -104,7 +82,7 @@ export function AddDiningModal() {
                                     <Label htmlFor="description" className="text-xs font-semibold text-slate-700 dark:text-slate-300 mb-2 block">
                                         Description
                                     </Label>
-                                    <Textarea id="description" name="description" defaultValue={editingData?.description} className="bg-white dark:bg-[#0f1117] border-slate-300 dark:border-[#2a3040] text-slate-900 dark:text-white min-h-[100px] resize-none" placeholder="Describe the offerings, specialties, and ambiance..." />
+                                    <Textarea id="description" name="description" defaultValue={editingData?.description || ""} className="bg-white dark:bg-[#0f1117] border-slate-300 dark:border-[#2a3040] text-slate-900 dark:text-white min-h-[100px] resize-none" placeholder="Describe the offerings, specialties, and ambiance..." />
                                 </div>
 
                                 {/* Row 3: Location & Maps */}
@@ -113,13 +91,13 @@ export function AddDiningModal() {
                                         <Label htmlFor="address" className="text-xs font-semibold text-slate-700 dark:text-slate-300 mb-2 block">
                                             Location / Complete Address <span className="text-red-500">*</span>
                                         </Label>
-                                        <Input id="address" name="address" defaultValue={editingData?.address} required className="bg-white dark:bg-[#0f1117] border-slate-300 dark:border-[#2a3040] text-slate-900 dark:text-white h-11" placeholder="Brgy. Poblacion, Agno" />
+                                        <Input id="address" name="address" defaultValue={editingData?.address || ""} required className="bg-white dark:bg-[#0f1117] border-slate-300 dark:border-[#2a3040] text-slate-900 dark:text-white h-11" placeholder="Brgy. Poblacion, Agno" />
                                     </div>
                                     <div>
                                         <Label htmlFor="googleMapsUrl" className="text-xs font-semibold text-slate-700 dark:text-slate-300 mb-2 block">
                                             Google Maps Link
                                         </Label>
-                                        <Input id="googleMapsUrl" name="googleMapsUrl" defaultValue={editingData?.googleMapsUrl} className="bg-white dark:bg-[#0f1117] border-slate-300 dark:border-[#2a3040] text-slate-900 dark:text-white h-11" placeholder="https://maps.google.com/..." />
+                                        <Input id="googleMapsUrl" name="googleMapsUrl" defaultValue={editingData?.googleMapsUrl || ""} className="bg-white dark:bg-[#0f1117] border-slate-300 dark:border-[#2a3040] text-slate-900 dark:text-white h-11" placeholder="https://maps.google.com/..." />
                                     </div>
                                 </div>
 
@@ -129,13 +107,13 @@ export function AddDiningModal() {
                                         <Label htmlFor="contactNumber" className="text-xs font-semibold text-slate-700 dark:text-slate-300 mb-2 block">
                                             Contact Number
                                         </Label>
-                                        <Input id="contactNumber" name="contactNumber" defaultValue={editingData?.contactNumber} className="bg-white dark:bg-[#0f1117] border-slate-300 dark:border-[#2a3040] text-slate-900 dark:text-white h-11" placeholder="0912 345 6789" />
+                                        <Input id="contactNumber" name="contactNumber" defaultValue={editingData?.contactNumber || ""} className="bg-white dark:bg-[#0f1117] border-slate-300 dark:border-[#2a3040] text-slate-900 dark:text-white h-11" placeholder="0912 345 6789" />
                                     </div>
                                     <div>
                                         <Label htmlFor="facebookUrl" className="text-xs font-semibold text-slate-700 dark:text-slate-300 mb-2 block">
                                             Facebook Page Link
                                         </Label>
-                                        <Input id="facebookUrl" name="facebookUrl" defaultValue={editingData?.facebookUrl} className="bg-white dark:bg-[#0f1117] border-slate-300 dark:border-[#2a3040] text-slate-900 dark:text-white h-11" placeholder="https://facebook.com/..." />
+                                        <Input id="facebookUrl" name="facebookUrl" defaultValue={editingData?.facebookUrl || ""} className="bg-white dark:bg-[#0f1117] border-slate-300 dark:border-[#2a3040] text-slate-900 dark:text-white h-11" placeholder="https://facebook.com/..." />
                                     </div>
                                 </div>
 
@@ -145,19 +123,19 @@ export function AddDiningModal() {
                                         <Label htmlFor="latitude" className="text-xs font-semibold text-slate-700 dark:text-slate-300 mb-2 block">
                                             Latitude
                                         </Label>
-                                        <Input id="latitude" name="latitude" type="number" step="any" defaultValue={editingData?.latitude} className="bg-white dark:bg-[#0f1117] border-slate-300 dark:border-[#2a3040] text-slate-900 dark:text-white h-11" placeholder="16.123..." />
+                                        <Input id="latitude" name="latitude" type="number" step="any" defaultValue={editingData?.latitude || ""} className="bg-white dark:bg-[#0f1117] border-slate-300 dark:border-[#2a3040] text-slate-900 dark:text-white h-11" placeholder="16.123..." />
                                     </div>
                                     <div>
                                         <Label htmlFor="longitude" className="text-xs font-semibold text-slate-700 dark:text-slate-300 mb-2 block">
                                             Longitude
                                         </Label>
-                                        <Input id="longitude" name="longitude" type="number" step="any" defaultValue={editingData?.longitude} className="bg-white dark:bg-[#0f1117] border-slate-300 dark:border-[#2a3040] text-slate-900 dark:text-white h-11" placeholder="119.876..." />
+                                        <Input id="longitude" name="longitude" type="number" step="any" defaultValue={editingData?.longitude || ""} className="bg-white dark:bg-[#0f1117] border-slate-300 dark:border-[#2a3040] text-slate-900 dark:text-white h-11" placeholder="119.876..." />
                                     </div>
                                     <div>
                                         <Label htmlFor="openingHours" className="text-xs font-semibold text-slate-700 dark:text-slate-300 mb-2 block">
                                             Operating Hours
                                         </Label>
-                                        <Input id="openingHours" name="openingHours" defaultValue={editingData?.openingHours} className="bg-white dark:bg-[#0f1117] border-slate-300 dark:border-[#2a3040] text-slate-900 dark:text-white h-11" placeholder="8:00 AM - 10:00 PM" />
+                                        <Input id="openingHours" name="openingHours" defaultValue={editingData?.openingHours || ""} className="bg-white dark:bg-[#0f1117] border-slate-300 dark:border-[#2a3040] text-slate-900 dark:text-white h-11" placeholder="8:00 AM - 10:00 PM" />
                                     </div>
                                 </div>
 

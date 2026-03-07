@@ -7,6 +7,19 @@ import { Plus, Trash2, AlertCircle, Users, Palette, ShieldAlert, Maximize2 } fro
 import { useState, useEffect } from "react";
 import { toast } from "sonner";
 
+// Point-in-polygon algorithm (Ray casting)
+function isPointInPolygon(lat: number, lng: number, polygon: [number, number][]) {
+    let inside = false;
+    for (let i = 0, j = polygon.length - 1; i < polygon.length; j = i++) {
+        const xi = polygon[i][0], yi = polygon[i][1];
+        const xj = polygon[j][0], yj = polygon[j][1];
+        const intersect = ((yi > lng) !== (yj > lng))
+            && (lat < (xj - xi) * (lng - yi) / (yj - yi) + xi);
+        if (intersect) inside = !inside;
+    }
+    return inside;
+}
+
 export function DisasterSidebar() {
     const { zones, activeZoneId, setActiveZoneId, addZone, updateZone, removeZone } = useDisaster();
     const { households } = useHousehold();
@@ -17,25 +30,24 @@ export function DisasterSidebar() {
     // Calculate affected households for the active zone
     const affectedHouseholds = activeZone
         ? households.filter(h =>
-            h.latitude <= activeZone.north &&
-            h.latitude >= activeZone.south &&
-            h.longitude <= activeZone.east &&
-            h.longitude >= activeZone.west
+            activeZone.shapes.some(shape => isPointInPolygon(h.latitude, h.longitude, shape))
         )
         : [];
 
     const handleAddNewZone = async () => {
         setIsAdding(true);
-        // Default box near Agno center
+        // Default polygon (Square) near Agno center
         const defaultZone = {
             type: "New Disaster Layer",
             typeColor: "#3b82f6", // Blue
             riskLevel: "Moderate",
             riskColor: "#f59e0b", // Orange
-            north: 16.12,
-            south: 16.10,
-            east: 119.81,
-            west: 119.78
+            shapes: [[
+                [16.12, 119.78],
+                [16.12, 119.81],
+                [16.10, 119.81],
+                [16.10, 119.78]
+            ]] as [number, number][][]
         };
 
         const result = await addDisasterZone(defaultZone);
@@ -59,10 +71,7 @@ export function DisasterSidebar() {
             typeColor: updatedData.typeColor,
             riskLevel: updatedData.riskLevel,
             riskColor: updatedData.riskColor,
-            north: updatedData.north,
-            south: updatedData.south,
-            east: updatedData.east,
-            west: updatedData.west
+            shapes: updatedData.shapes
         });
 
         if (!result.success) {

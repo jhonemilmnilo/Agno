@@ -2,23 +2,41 @@
 
 import React, { createContext, useContext, useState } from "react";
 
+export interface Dining {
+    id: string;
+    name: string;
+    description: string | null;
+    address: string;
+    cuisineType: string | null;
+    openingHours: string | null;
+    contactNumber: string | null;
+    facebookUrl: string | null;
+    imageUrl: string | null;
+    latitude: number | null;
+    longitude: number | null;
+    googleMapsUrl: string | null;
+    isPublished: boolean;
+    createdAt: Date;
+    updatedAt: Date;
+}
+
 interface DiningContextType {
     searchTerm: string;
     setSearchTerm: (term: string) => void;
     isAddModalOpen: boolean;
     setIsAddModalOpen: (isOpen: boolean) => void;
-    diningData: any[];
-    editingData: any | null;
-    setEditingData: (data: any | null) => void;
+    diningData: Dining[];
+    editingData: Dining | null;
+    setEditingData: (data: Dining | null) => void;
 }
 
 const DiningContext = createContext<DiningContextType | undefined>(undefined);
 
-export function DiningProvider({ children, initialData }: { children: React.ReactNode; initialData: any[] }) {
+export function DiningProvider({ children, initialData }: { children: React.ReactNode; initialData: Dining[] }) {
     const [searchTerm, setSearchTerm] = useState("");
     const [isAddModalOpen, setIsAddModalOpen] = useState(false);
-    const [diningData, setDiningData] = useState(initialData);
-    const [editingData, setEditingData] = useState<any | null>(null);
+    const [diningData, setDiningData] = useState<Dining[]>(initialData);
+    const [editingData, setEditingData] = useState<Dining | null>(null);
 
     // Whenever initialData from server changes, you might want to sync, 
     // but for simple cases we just use it directly or let the server action revalidate the page.

@@ -1,6 +1,7 @@
 "use client";
 
-import { useEvents } from "../providers/EventsProvider";
+import { useEvents, Event } from "../providers/EventsProvider";
+import Image from "next/image";
 import {
     Table,
     TableBody,
@@ -26,7 +27,7 @@ import { formatDate } from "@/app/admin/content/Tourism/utils/date_and_time"; //
 export function EventsTable() {
     const { events, searchTerm, setEditingData, setIsAddModalOpen, selectedCategory } = useEvents();
 
-    const filteredEvents = events.filter((event) => {
+    const filteredEvents = events.filter((event: Event) => {
         const matchesSearch =
             event.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
             event.venueName.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -41,7 +42,7 @@ export function EventsTable() {
         try {
             await toggleEventStatus(id, !currentStatus);
             toast.success(currentStatus ? "Event hidden na pal!" : "Event published na pal!");
-        } catch (error) {
+        } catch {
             toast.error("Failed sa status update. Check mo uli pal.");
         }
     };
@@ -51,7 +52,7 @@ export function EventsTable() {
             try {
                 await deleteEvent(id);
                 toast.success("Event deleted na pal!");
-            } catch (error) {
+            } catch {
                 toast.error("Error sa pag-delete. Subukan mo uli.");
             }
         }
@@ -85,9 +86,9 @@ export function EventsTable() {
                             <TableRow key={event.id} className="group border-b dark:border-[#2a3040] hover:bg-slate-50/50 dark:hover:bg-white/5 transition-colors">
                                 <TableCell className="py-4">
                                     <div className="flex items-center space-x-4">
-                                        <div className="w-16 h-16 rounded-xl overflow-hidden bg-slate-100 dark:bg-slate-800 flex-shrink-0 border-2 border-white dark:border-slate-700 shadow-sm relative group-hover:scale-105 transition-transform duration-300">
+                                        <div className="relative w-16 h-16 rounded-xl overflow-hidden bg-slate-100 dark:bg-slate-800 flex-shrink-0 border-2 border-white dark:border-slate-700 shadow-sm group-hover:scale-105 transition-transform duration-300">
                                             {event.imageUrl ? (
-                                                <img src={event.imageUrl} alt={event.title} className="w-full h-full object-cover" />
+                                                <Image src={event.imageUrl} alt={event.title} layout="fill" objectFit="cover" />
                                             ) : (
                                                 <div className="w-full h-full flex items-center justify-center text-slate-300">
                                                     <Calendar className="w-6 h-6" />
@@ -123,8 +124,8 @@ export function EventsTable() {
                                 </TableCell>
                                 <TableCell className="py-4">
                                     <Badge className={`font-black uppercase tracking-wider rounded-md text-[10px] py-1 px-2.5 shadow-sm ${event.isPublished
-                                            ? "bg-emerald-500 text-white border-none"
-                                            : "bg-slate-200 dark:bg-slate-700 text-slate-600 dark:text-slate-400 border-none"
+                                        ? "bg-emerald-500 text-white border-none"
+                                        : "bg-slate-200 dark:bg-slate-700 text-slate-600 dark:text-slate-400 border-none"
                                         }`}>
                                         {event.isPublished ? "Published" : "Hidden"}
                                     </Badge>
@@ -158,7 +159,7 @@ export function EventsTable() {
                                             </DropdownMenuItem>
                                             {event.googleMapsUrl && (
                                                 <DropdownMenuItem
-                                                    onClick={() => window.open(event.googleMapsUrl, "_blank")}
+                                                    onClick={() => window.open(event.googleMapsUrl as string, "_blank")}
                                                     className="flex items-center gap-3 px-3 py-2.5 rounded-lg cursor-pointer hover:bg-blue-50 dark:hover:bg-blue-900/20 text-slate-600 dark:text-slate-300 hover:text-blue-600 dark:hover:text-blue-400 font-bold transition-all duration-200"
                                                 >
                                                     <Map className="w-4 h-4" /> View on Map

@@ -1,6 +1,6 @@
 "use client";
 
-import { NewsProvider } from "./providers";
+import { NewsProvider, News } from "./providers/NewsProvider";
 import {
     NewsCards,
     NewsFilters,
@@ -9,8 +9,9 @@ import {
 } from "./components";
 import { Home, Newspaper } from "lucide-react";
 
+
 interface NewsPageProps {
-    initialData: any[];
+    initialData: News[];
 }
 
 export function NewsPage({ initialData }: NewsPageProps) {

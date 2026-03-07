@@ -2,23 +2,37 @@
 
 import { createContext, useContext, useState, useEffect, ReactNode } from "react";
 
+export interface Job {
+    id: string;
+    title: string;
+    department: string;
+    description: string;
+    requirements: string | null;
+    type: string;
+    salaryRange: string | null;
+    deadline: Date | null;
+    isPublished: boolean;
+    createdAt: Date;
+    updatedAt: Date;
+}
+
 interface JobsContextType {
-    jobsData: any[];
-    setJobsData: (data: any[]) => void;
+    jobsData: Job[];
+    setJobsData: (data: Job[]) => void;
     searchTerm: string;
     setSearchTerm: (term: string) => void;
     isAddModalOpen: boolean;
     setIsAddModalOpen: (open: boolean) => void;
-    editingData: any | null;
-    setEditingData: (data: any | null) => void;
+    editingData: Job | null;
+    setEditingData: (data: Job | null) => void;
     selectedDepartment: string;
     setSelectedDepartment: (department: string) => void;
 }
 
 const JobsContext = createContext<JobsContextType | undefined>(undefined);
 
-export function JobsProvider({ children, initialData }: { children: ReactNode; initialData: any[] }) {
-    const [jobsData, setJobsData] = useState(initialData);
+export function JobsProvider({ children, initialData }: { children: ReactNode; initialData: Job[] }) {
+    const [jobsData, setJobsData] = useState<Job[]>(initialData);
     const [searchTerm, setSearchTerm] = useState("");
     const [isAddModalOpen, setIsAddModalOpen] = useState(false);
     const [editingData, setEditingData] = useState<any | null>(null);

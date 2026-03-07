@@ -9,7 +9,7 @@ import {
     HouseholdMapView
 } from "./components";
 import { Button } from "@/components/ui/button";
-import { Plus, Home, Navigation, Map } from "lucide-react";
+import { Plus, Home, Map } from "lucide-react";
 
 export function HouseholdsPage() {
     const { setIsAddModalOpen, viewMode } = useHousehold();

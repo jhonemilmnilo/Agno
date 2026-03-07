@@ -23,15 +23,15 @@ function MapLoading() {
 }
 
 // Leaflet icon fix for Next.js - handled inside a useEffect
-let DefaultIcon: any;
-let SafeIcon: any;
-let RiskIcon: any;
+let DefaultIcon: import("leaflet").Icon | null = null;
+let SafeIcon: import("leaflet").Icon | null = null;
+let RiskIcon: import("leaflet").Icon | null = null;
 
 export function HouseholdMapView() {
     const { households, searchQuery, selectedBarangay, selectedRiskLevel, viewMode } = useHousehold();
     const [mounted, setMounted] = useState(false);
     const [iconsLoaded, setIconsLoaded] = useState(false);
-    const [agnoBorder, setAgnoBorder] = useState<any>(null);
+    const [agnoBorder, setAgnoBorder] = useState<GeoJSON.FeatureCollection | null>(null);
 
     useEffect(() => {
         // Fetch Agno Border GeoJSON

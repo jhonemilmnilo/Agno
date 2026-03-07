@@ -2,14 +2,33 @@
 
 import React, { createContext, useContext, useState, useEffect } from "react";
 
+export interface Accommodation {
+    id: string;
+    name: string;
+    description: string | null;
+    address: string;
+    type: string;
+    priceRange: string | null;
+    amenities: string | null;
+    contactNumber: string | null;
+    websiteUrl: string | null;
+    imageUrl: string | null;
+    latitude: number | null;
+    longitude: number | null;
+    googleMapsUrl: string | null;
+    isPublished: boolean;
+    createdAt: Date;
+    updatedAt: Date;
+}
+
 interface AccommodationContextType {
-    accommodationData: any[];
+    accommodationData: Accommodation[];
     searchTerm: string;
     setSearchTerm: (term: string) => void;
     isAddModalOpen: boolean;
     setIsAddModalOpen: (isOpen: boolean) => void;
-    editingData: any | null;
-    setEditingData: (data: any | null) => void;
+    editingData: Accommodation | null;
+    setEditingData: (data: Accommodation | null) => void;
 }
 
 const AccommodationContext = createContext<AccommodationContextType | undefined>(undefined);
@@ -19,9 +38,9 @@ export function AccommodationProvider({
     initialData
 }: {
     children: React.ReactNode;
-    initialData: any[]
+    initialData: Accommodation[]
 }) {
-    const [accommodationData, setAccommodationData] = useState(initialData);
+    const [accommodationData, setAccommodationData] = useState<Accommodation[]>(initialData);
     const [searchTerm, setSearchTerm] = useState("");
     const [isAddModalOpen, setIsAddModalOpen] = useState(false);
     const [editingData, setEditingData] = useState<any | null>(null);

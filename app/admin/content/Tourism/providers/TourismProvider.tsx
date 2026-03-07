@@ -2,14 +2,32 @@
 
 import React, { createContext, useContext, useState, useEffect } from "react";
 
+export interface Tourism {
+    id: string;
+    name: string;
+    description: string | null;
+    category: string;
+    address: string;
+    entranceFee: string | null;
+    bestTimeToVisit: string | null;
+    contactNumber: string | null;
+    imageUrl: string | null;
+    latitude: number | null;
+    longitude: number | null;
+    googleMapsUrl: string | null;
+    isPublished: boolean;
+    createdAt: Date;
+    updatedAt: Date;
+}
+
 interface TourismContextType {
-    tourismData: any[];
+    tourismData: Tourism[];
     searchTerm: string;
     setSearchTerm: (term: string) => void;
     isAddModalOpen: boolean;
     setIsAddModalOpen: (isOpen: boolean) => void;
-    editingData: any | null;
-    setEditingData: (data: any | null) => void;
+    editingData: Tourism | null;
+    setEditingData: (data: Tourism | null) => void;
     selectedCategory: string;
     setSelectedCategory: (category: string) => void;
 }
@@ -21,9 +39,9 @@ export function TourismProvider({
     initialData
 }: {
     children: React.ReactNode;
-    initialData: any[]
+    initialData: Tourism[]
 }) {
-    const [tourismData, setTourismData] = useState(initialData);
+    const [tourismData, setTourismData] = useState<Tourism[]>(initialData);
     const [searchTerm, setSearchTerm] = useState("");
     const [isAddModalOpen, setIsAddModalOpen] = useState(false);
     const [editingData, setEditingData] = useState<any | null>(null);

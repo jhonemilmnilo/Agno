@@ -276,7 +276,7 @@ model DisasterZone {
   riskColor   String   // The severity color (Hex)
   
   // Multi-Polygon Geometry (Array of coordinate arrays)
-  shapes      Json     @default("[]")
+  shapes      Json
   
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt

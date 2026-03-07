@@ -1,7 +1,8 @@
 "use client";
 
 import { motion } from "framer-motion";
-import { useAccommodation } from "../providers/AccommodationProvider";
+import { useAccommodation, Accommodation } from "../providers/AccommodationProvider";
+import Image from "next/image";
 import { BedDouble, MapPin, MoreHorizontal, Map as MapIcon, Trash, EyeOff, Eye, Globe } from "lucide-react";
 import { deleteAccommodation, toggleAccommodationStatus } from "@/app/admin/actions";
 import {
@@ -26,7 +27,7 @@ import {
 export function AccommodationTable() {
     const { accommodationData, searchTerm, setEditingData, setIsAddModalOpen } = useAccommodation();
 
-    const filteredData = accommodationData.filter((item: any) =>
+    const filteredData = accommodationData.filter((item: Accommodation) =>
         item.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
         item.address.toLowerCase().includes(searchTerm.toLowerCase()) ||
         item.type?.toLowerCase().includes(searchTerm.toLowerCase())
@@ -57,7 +58,7 @@ export function AccommodationTable() {
                             </TableCell>
                         </TableRow>
                     ) : (
-                        filteredData.map((item: any, index: number) => (
+                        filteredData.map((item: Accommodation, index: number) => (
                             <motion.tr
                                 key={item.id}
                                 initial={{ opacity: 0, x: -10 }}
@@ -67,9 +68,9 @@ export function AccommodationTable() {
                             >
                                 <TableCell className="pl-6 py-4">
                                     <div className="flex items-center space-x-4">
-                                        <div className="w-12 h-12 rounded-xl bg-slate-100 dark:bg-slate-800 flex-shrink-0 overflow-hidden border border-slate-200 dark:border-[#2a3040]">
+                                        <div className="relative w-12 h-12 rounded-xl bg-slate-100 dark:bg-slate-800 flex-shrink-0 overflow-hidden border border-slate-200 dark:border-[#2a3040]">
                                             {item.imageUrl ? (
-                                                <img src={item.imageUrl} alt={item.name} className="w-full h-full object-cover" />
+                                                <Image src={item.imageUrl} alt={item.name} layout="fill" objectFit="cover" />
                                             ) : (
                                                 <div className="w-full h-full flex items-center justify-center">
                                                     <BedDouble className="w-5 h-5 text-slate-400" />
@@ -143,7 +144,7 @@ export function AccommodationTable() {
                                             {item.websiteUrl && (
                                                 <DropdownMenuItem
                                                     className="text-slate-700 dark:text-slate-300 focus:bg-slate-100 dark:focus:bg-[#2a3040] focus:text-slate-900 dark:focus:text-white cursor-pointer rounded-md mx-1 my-1 flex items-center"
-                                                    onClick={() => window.open(item.websiteUrl, "_blank")}
+                                                    onClick={() => window.open(item.websiteUrl as string, "_blank")}
                                                 >
                                                     <Globe className="w-4 h-4 mr-2 text-blue-500" /> Visit Website
                                                 </DropdownMenuItem>

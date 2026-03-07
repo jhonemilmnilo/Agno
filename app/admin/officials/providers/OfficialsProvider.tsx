@@ -2,23 +2,36 @@
 
 import { createContext, useContext, useState, useEffect, ReactNode } from "react";
 
+export interface Official {
+    id: string;
+    name: string;
+    position: string;
+    termStart: Date;
+    termEnd: Date;
+    contactNumber: string | null;
+    imageUrl: string | null;
+    isPublished: boolean;
+    createdAt: Date;
+    updatedAt: Date;
+}
+
 interface OfficialsContextType {
-    officialsData: any[];
-    setOfficialsData: (data: any[]) => void;
+    officialsData: Official[];
+    setOfficialsData: (data: Official[]) => void;
     searchTerm: string;
     setSearchTerm: (term: string) => void;
     isAddModalOpen: boolean;
     setIsAddModalOpen: (open: boolean) => void;
-    editingData: any | null;
-    setEditingData: (data: any | null) => void;
+    editingData: Official | null;
+    setEditingData: (data: Official | null) => void;
     selectedPosition: string;
     setSelectedPosition: (position: string) => void;
 }
 
 const OfficialsContext = createContext<OfficialsContextType | undefined>(undefined);
 
-export function OfficialsProvider({ children, initialData }: { children: ReactNode; initialData: any[] }) {
-    const [officialsData, setOfficialsData] = useState(initialData);
+export function OfficialsProvider({ children, initialData }: { children: ReactNode; initialData: Official[] }) {
+    const [officialsData, setOfficialsData] = useState<Official[]>(initialData);
     const [searchTerm, setSearchTerm] = useState("");
     const [isAddModalOpen, setIsAddModalOpen] = useState(false);
     const [editingData, setEditingData] = useState<any | null>(null);

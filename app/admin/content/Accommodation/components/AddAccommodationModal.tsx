@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
-import { Store, UploadCloud, Save, Building2, MapPin, Globe, CreditCard, List } from "lucide-react";
+import { UploadCloud, Save, Building2, MapPin, Globe, CreditCard, List } from "lucide-react";
 import { useAccommodation } from "../providers/AccommodationProvider";
 import { useAccommodationForm } from "../hooks/useAccommodationForm";
 import {
@@ -24,12 +24,11 @@ export function AddAccommodationModal() {
     const [imagePreview, setImagePreview] = useState<string | null>(null);
 
     useEffect(() => {
-        if (editingData?.imageUrl) {
-            setImagePreview(editingData.imageUrl);
-        } else {
-            setImagePreview(null);
+        const url = editingData?.imageUrl || null;
+        if (imagePreview !== url) {
+            setImagePreview(url);
         }
-    }, [editingData]);
+    }, [editingData, imagePreview]);
 
     return (
         <Dialog
@@ -96,7 +95,7 @@ export function AddAccommodationModal() {
                                     </div>
                                     <div className="space-y-2">
                                         <Label htmlFor="description" className="text-xs font-semibold text-slate-700 dark:text-slate-300">Description</Label>
-                                        <Textarea id="description" name="description" defaultValue={editingData?.description} className="bg-white dark:bg-[#0f1117] border-slate-300 dark:border-[#2a3040] min-h-[100px] resize-none" placeholder="What makes this place special? Mention views, rooms, etc..." />
+                                        <Textarea id="description" name="description" defaultValue={editingData?.description || ""} className="bg-white dark:bg-[#0f1117] border-slate-300 dark:border-[#2a3040] min-h-[100px] resize-none" placeholder="What makes this place special? Mention views, rooms, etc..." />
                                     </div>
                                 </div>
 
@@ -109,22 +108,22 @@ export function AddAccommodationModal() {
                                     <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                                         <div className="space-y-2">
                                             <Label htmlFor="priceRange" className="text-xs font-semibold text-slate-700 dark:text-slate-300">Price Range / Rate</Label>
-                                            <Input id="priceRange" name="priceRange" defaultValue={editingData?.priceRange} className="bg-white dark:bg-[#0f1117] border-slate-300 dark:border-[#2a3040] h-11" placeholder="e.g. ₱1,500 - ₱3,000 / night" />
+                                            <Input id="priceRange" name="priceRange" defaultValue={editingData?.priceRange || ""} className="bg-white dark:bg-[#0f1117] border-slate-300 dark:border-[#2a3040] h-11" placeholder="e.g. ₱1,500 - ₱3,000 / night" />
                                         </div>
                                         <div className="space-y-2">
                                             <Label htmlFor="contactNumber" className="text-xs font-semibold text-slate-700 dark:text-slate-300">Contact Number</Label>
-                                            <Input id="contactNumber" name="contactNumber" defaultValue={editingData?.contactNumber} className="bg-white dark:bg-[#0f1117] border-slate-300 dark:border-[#2a3040] h-11" placeholder="0912 345 6789" />
+                                            <Input id="contactNumber" name="contactNumber" defaultValue={editingData?.contactNumber || ""} className="bg-white dark:bg-[#0f1117] border-slate-300 dark:border-[#2a3040] h-11" placeholder="0912 345 6789" />
                                         </div>
                                         <div className="space-y-2">
                                             <Label htmlFor="websiteUrl" className="text-xs font-semibold text-slate-700 dark:text-slate-300">Website or Booking URL</Label>
                                             <div className="relative">
                                                 <Globe className="absolute left-3 top-3.5 h-4 w-4 text-slate-400" />
-                                                <Input id="websiteUrl" name="websiteUrl" defaultValue={editingData?.websiteUrl} className="pl-9 bg-white dark:bg-[#0f1117] border-slate-300 dark:border-[#2a3040] h-11" placeholder="https://..." />
+                                                <Input id="websiteUrl" name="websiteUrl" defaultValue={editingData?.websiteUrl || ""} className="pl-9 bg-white dark:bg-[#0f1117] border-slate-300 dark:border-[#2a3040] h-11" placeholder="https://..." />
                                             </div>
                                         </div>
                                         <div className="space-y-2">
                                             <Label htmlFor="amenities" className="text-xs font-semibold text-slate-700 dark:text-slate-300">Amenities (Comma separated)</Label>
-                                            <Input id="amenities" name="amenities" defaultValue={editingData?.amenities} className="bg-white dark:bg-[#0f1117] border-slate-300 dark:border-[#2a3040] h-11" placeholder="WiFi, Pool, Breakfast, Parking..." />
+                                            <Input id="amenities" name="amenities" defaultValue={editingData?.amenities || ""} className="bg-white dark:bg-[#0f1117] border-slate-300 dark:border-[#2a3040] h-11" placeholder="WiFi, Pool, Breakfast, Parking..." />
                                         </div>
                                     </div>
                                 </div>
@@ -142,16 +141,16 @@ export function AddAccommodationModal() {
                                     <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                                         <div className="space-y-2">
                                             <Label htmlFor="latitude" className="text-xs font-semibold text-slate-700 dark:text-slate-300">Latitude</Label>
-                                            <Input id="latitude" name="latitude" type="number" step="any" defaultValue={editingData?.latitude} className="bg-white dark:bg-[#0f1117] border-slate-300 dark:border-[#2a3040] h-11 font-mono text-sm" placeholder="16.123..." />
+                                            <Input id="latitude" name="latitude" type="number" step="any" defaultValue={editingData?.latitude || ""} className="bg-white dark:bg-[#0f1117] border-slate-300 dark:border-[#2a3040] h-11 font-mono text-sm" placeholder="16.123..." />
                                         </div>
                                         <div className="space-y-2">
                                             <Label htmlFor="longitude" className="text-xs font-semibold text-slate-700 dark:text-slate-300">Longitude</Label>
-                                            <Input id="longitude" name="longitude" type="number" step="any" defaultValue={editingData?.longitude} className="bg-white dark:bg-[#0f1117] border-slate-300 dark:border-[#2a3040] h-11 font-mono text-sm" placeholder="119.876..." />
+                                            <Input id="longitude" name="longitude" type="number" step="any" defaultValue={editingData?.longitude || ""} className="bg-white dark:bg-[#0f1117] border-slate-300 dark:border-[#2a3040] h-11 font-mono text-sm" placeholder="119.876..." />
                                         </div>
                                     </div>
                                     <div className="space-y-2">
                                         <Label htmlFor="googleMapsUrl" className="text-xs font-semibold text-slate-700 dark:text-slate-300">Google Maps URL</Label>
-                                        <Input id="googleMapsUrl" name="googleMapsUrl" defaultValue={editingData?.googleMapsUrl} className="bg-white dark:bg-[#0f1117] border-slate-300 dark:border-[#2a3040] h-11" placeholder="https://maps.google.com/..." />
+                                        <Input id="googleMapsUrl" name="googleMapsUrl" defaultValue={editingData?.googleMapsUrl || ""} className="bg-white dark:bg-[#0f1117] border-slate-300 dark:border-[#2a3040] h-11" placeholder="https://maps.google.com/..." />
                                     </div>
                                 </div>
 

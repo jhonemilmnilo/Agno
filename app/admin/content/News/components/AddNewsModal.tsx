@@ -25,12 +25,11 @@ export function AddNewsModal() {
     const fileInputRef = useRef<HTMLInputElement>(null);
 
     useEffect(() => {
-        if (editingData?.imageUrl) {
-            setImagePreview(editingData.imageUrl);
-        } else {
-            setImagePreview(null);
+        const url = editingData?.imageUrl || null;
+        if (imagePreview !== url) {
+            setImagePreview(url);
         }
-    }, [editingData]);
+    }, [editingData, imagePreview]);
 
     const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const file = e.target.files?.[0];
@@ -45,9 +44,9 @@ export function AddNewsModal() {
 
     const categories = ["Announcement", "Local News", "Advisory", "Project Update", "Other"];
 
-    const formatDateForInput = (dateString: string | undefined) => {
-        if (!dateString) return "";
-        const date = new Date(dateString);
+    const formatDateForInput = (dateInput: Date | string | undefined) => {
+        if (!dateInput) return "";
+        const date = dateInput instanceof Date ? dateInput : new Date(dateInput);
         return date.toISOString().slice(0, 16);
     };
 
@@ -92,7 +91,7 @@ export function AddNewsModal() {
                                         <Input
                                             name="title"
                                             required
-                                            defaultValue={editingData?.title}
+                                            defaultValue={editingData?.title || ""}
                                             placeholder="e.g. Agno Suspends Classes During Typhoon"
                                             className="h-12 bg-slate-50 dark:bg-[#1a1f2e] border-slate-200 dark:border-[#2a3040] focus:ring-2 focus:ring-blue-500/20"
                                         />
@@ -141,7 +140,7 @@ export function AddNewsModal() {
                                         <Textarea
                                             name="content"
                                             required
-                                            defaultValue={editingData?.content}
+                                            defaultValue={editingData?.content || ""}
                                             placeholder="Write the full news story here..."
                                             className="min-h-[220px] bg-slate-50 dark:bg-[#1a1f2e] border-slate-200 dark:border-[#2a3040] resize-none"
                                         />

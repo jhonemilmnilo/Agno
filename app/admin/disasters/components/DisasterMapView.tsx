@@ -2,18 +2,26 @@
 
 import { useEffect, useState, useMemo } from "react";
 import dynamic from "next/dynamic";
-import { Loader2, Trash2, Maximize2 } from "lucide-react";
-import { useDisaster } from "../providers/DisasterProvider";
+import { Loader2, Trash2, Maximize2, Plus } from "lucide-react";
+import { useDisaster, DisasterZone } from "../providers/DisasterProvider";
 import { addDisasterZone, updateDisasterZone, deleteDisasterZone } from "../../actions";
 import { toast } from "sonner";
+import type { GeoJsonObject } from "geojson";
 
 // Import react-leaflet dynamically to prevent SSR issues
 const MapContainer = dynamic(() => import("react-leaflet").then(mod => mod.MapContainer), { ssr: false, loading: () => <MapLoading /> });
 const TileLayer = dynamic(() => import("react-leaflet").then(mod => mod.TileLayer), { ssr: false });
-const Rectangle = dynamic(() => import("react-leaflet").then(mod => mod.Rectangle), { ssr: false });
+const Polygon = dynamic(() => import("react-leaflet").then(mod => mod.Polygon), { ssr: false });
 const Marker = dynamic(() => import("react-leaflet").then(mod => mod.Marker), { ssr: false });
 const Popup = dynamic(() => import("react-leaflet").then(mod => mod.Popup), { ssr: false });
 const GeoJSON = dynamic(() => import("react-leaflet").then(mod => mod.GeoJSON), { ssr: false });
+
+// This component handles the auto-centering when the border loads
+function MapController({ geojson }: { geojson: any }) {
+    const map = (window as any).L ? (window as any).Map : null; // This is a bit tricky with dynamic imports
+    // We'll use the useMap hook inside the component
+    return null;
+}
 
 function MapLoading() {
     return (
@@ -28,8 +36,8 @@ function MapLoading() {
 let HandleIcon: any;
 
 export function DisasterMapView() {
-    const { zones, refreshZones, activeZoneId, setActiveZoneId, updateZone, removeZone } = useDisaster();
-    const [agnoBorder, setAgnoBorder] = useState<any>(null);
+    const { zones, activeZoneId, setActiveZoneId, updateZone, removeZone } = useDisaster();
+    const [agnoBorder, setAgnoBorder] = useState<GeoJsonObject | null>(null);
     const [mounted, setMounted] = useState(false);
     const [iconsLoaded, setIconsLoaded] = useState(false);
 
@@ -44,7 +52,7 @@ export function DisasterMapView() {
         import("leaflet").then(L => {
             HandleIcon = new L.DivIcon({
                 className: 'custom-div-icon',
-                html: "<div style='background-color: white; border: 2px solid #3b82f6; width: 12px; height: 12px; border-radius: 2px;'></div>",
+                html: "<div style='background-color: white; border: 2px solid #3b82f6; width: 12px; height: 12px; border-radius: 2px; box-shadow: 0 0 5px rgba(0,0,0,0.2)'></div>",
                 iconSize: [12, 12],
                 iconAnchor: [6, 6]
             });
@@ -54,32 +62,38 @@ export function DisasterMapView() {
 
     if (!mounted || !iconsLoaded) return <MapLoading />;
 
-    const handleResize = async (zone: any, corner: string, latlng: any) => {
-        let newBounds = { north: zone.north, south: zone.south, east: zone.east, west: zone.west };
+    const handleVertexDrag = async (zone: DisasterZone, shapeIdx: number, vertexIdx: number, latlng: { lat: number, lng: number }) => {
+        const newShapes = [...zone.shapes];
+        newShapes[shapeIdx] = [...newShapes[shapeIdx]];
+        newShapes[shapeIdx][vertexIdx] = [latlng.lat, latlng.lng];
 
-        if (corner === 'nw') { newBounds.north = latlng.lat; newBounds.west = latlng.lng; }
-        if (corner === 'ne') { newBounds.north = latlng.lat; newBounds.east = latlng.lng; }
-        if (corner === 'sw') { newBounds.south = latlng.lat; newBounds.west = latlng.lng; }
-        if (corner === 'se') { newBounds.south = latlng.lat; newBounds.east = latlng.lng; }
+        updateZone(zone.id, { shapes: newShapes });
+        await updateDisasterZone(zone.id, { shapes: newShapes });
+    };
 
-        // Update local state for immediate feedback
-        updateZone(zone.id, newBounds);
+    const handleMidPointDrag = async (zone: DisasterZone, shapeIdx: number, insertIdx: number, latlng: { lat: number, lng: number }) => {
+        const newShapes = [...zone.shapes];
+        newShapes[shapeIdx] = [...newShapes[shapeIdx]];
+        newShapes[shapeIdx].splice(insertIdx, 0, [latlng.lat, latlng.lng]);
 
-        // Update DB
-        const result = await updateDisasterZone(zone.id, {
-            type: zone.type,
-            typeColor: zone.typeColor,
-            riskLevel: zone.riskLevel,
-            riskColor: zone.riskColor,
-            north: newBounds.north,
-            south: newBounds.south,
-            east: newBounds.east,
-            west: newBounds.west
-        });
+        updateZone(zone.id, { shapes: newShapes });
+        await updateDisasterZone(zone.id, { shapes: newShapes });
+        toast.success("New side added!");
+    };
 
-        if (!result.success) {
-            toast.error("Failed to save zone changes.");
-        }
+    const handleAddArea = async (zone: DisasterZone) => {
+        const center = [16.1158, 119.7997];
+        const newShape: [number, number][] = [
+            [center[0] + 0.005, center[1] - 0.005],
+            [center[0] + 0.005, center[1] + 0.005],
+            [center[0] - 0.005, center[1] + 0.005],
+            [center[0] - 0.005, center[1] - 0.005]
+        ];
+
+        const newShapes = [...zone.shapes, newShape];
+        updateZone(zone.id, { shapes: newShapes });
+        await updateDisasterZone(zone.id, { shapes: newShapes });
+        toast.success("New area added to this disaster type!");
     };
 
     const handleDelete = async (id: string) => {
@@ -90,6 +104,31 @@ export function DisasterMapView() {
         } else {
             toast.error("Failed to delete zone.");
         }
+    };
+
+    // Calculate the mask to hide areas outside Agno
+    const maskPositions = useMemo(() => {
+        if (!agnoBorder || (agnoBorder as any).type !== "Polygon") return null;
+
+        const outerWorld = [
+            [90, -180],
+            [90, 180],
+            [-90, 180],
+            [-90, -180],
+        ];
+
+        // GeoJSON uses [lng, lat], Leaflet uses [lat, lng]
+        const agnoCoords = (agnoBorder as any).coordinates[0].map((coord: [number, number]) => [coord[1], coord[0]]);
+
+        // Leaflet Polygon hole is an array of arrays
+        return [outerWorld, agnoCoords];
+    }, [agnoBorder]);
+
+    // Use a component that will actually call fitBounds
+    const FitBoundsComponent = () => {
+        const map = (window as any).mapInstance;
+        // This is a workaround since we need the map instance
+        return null;
     };
 
     return (
@@ -110,75 +149,116 @@ export function DisasterMapView() {
                     {agnoBorder && (
                         <GeoJSON
                             data={agnoBorder}
-                            style={{ color: '#ffffff', weight: 1, opacity: 0.5, fillOpacity: 0.05 }}
+                            style={{ color: '#3b82f6', weight: 3, opacity: 1, fillOpacity: 0 }}
+                        />
+                    )}
+
+                    {/* The "Show only for Agno" Mask */}
+                    {maskPositions && (
+                        <Polygon
+                            positions={maskPositions as any}
+                            pathOptions={{
+                                fillColor: "#0f172a",
+                                fillOpacity: 0.7,
+                                weight: 0,
+                                color: "transparent",
+                                pane: "overlayPane"
+                            }}
                         />
                     )}
 
                     {zones.map((zone) => {
                         const isActive = activeZoneId === zone.id;
-                        const bounds: [number, number][] = [[zone.south, zone.west], [zone.north, zone.east]];
+
+                        if (!zone.shapes || !Array.isArray(zone.shapes)) return null;
 
                         return (
                             <div key={zone.id}>
-                                <Rectangle
-                                    bounds={bounds as any}
-                                    pathOptions={{
-                                        color: zone.riskColor,
-                                        fillColor: zone.typeColor,
-                                        fillOpacity: 0.4,
-                                        weight: isActive ? 3 : 1
-                                    }}
-                                    eventHandlers={{
-                                        click: () => setActiveZoneId(zone.id)
-                                    }}
-                                >
-                                    <Popup>
-                                        <div className="p-2">
-                                            <p className="font-bold text-lg mb-1">{zone.type}</p>
-                                            <p className="text-sm text-slate-500 mb-2">Risk: <span style={{ color: zone.riskColor }} className="font-bold">{zone.riskLevel}</span></p>
-                                            <button
-                                                onClick={() => handleDelete(zone.id)}
-                                                className="flex items-center gap-2 px-3 py-1.5 bg-red-50 text-red-600 rounded-lg hover:bg-red-100 transition-colors w-full justify-center"
-                                            >
-                                                <Trash2 className="w-4 h-4" /> Delete Zone
-                                            </button>
-                                        </div>
-                                    </Popup>
-                                </Rectangle>
+                                {zone.shapes.map((shape: [number, number][], sIdx: number) => (
+                                    <div key={`${zone.id}-s-${sIdx}`}>
+                                        <Polygon
+                                            positions={shape as any}
+                                            pathOptions={{
+                                                color: zone.riskColor,
+                                                fillColor: zone.typeColor,
+                                                fillOpacity: 0.4,
+                                                weight: isActive ? 3 : 1
+                                            }}
+                                            eventHandlers={{
+                                                click: (e) => {
+                                                    (e as any).originalEvent.stopPropagation();
+                                                    setActiveZoneId(zone.id);
+                                                }
+                                            }}
+                                        >
+                                            <Popup>
+                                                <div className="p-3 min-w-[150px]">
+                                                    <p className="font-bold text-lg mb-1">{zone.type}</p>
+                                                    <p className="text-sm text-slate-500 mb-3">
+                                                        Risk: <span style={{ color: zone.riskColor }} className="font-bold">{zone.riskLevel}</span>
+                                                    </p>
+                                                    <div className="flex flex-col gap-2">
+                                                        <button
+                                                            onClick={() => handleAddArea(zone)}
+                                                            className="flex items-center gap-2 px-3 py-1.5 bg-blue-50 text-blue-600 rounded-lg hover:bg-blue-100 transition-colors text-xs font-bold"
+                                                        >
+                                                            <Plus className="w-3 h-3" /> Add Another Area
+                                                        </button>
+                                                        <button
+                                                            onClick={() => handleDelete(zone.id)}
+                                                            className="flex items-center gap-2 px-3 py-1.5 bg-red-50 text-red-600 rounded-lg hover:bg-red-100 transition-colors text-xs font-bold"
+                                                        >
+                                                            <Trash2 className="w-3 h-3" /> Remove Disaster
+                                                        </button>
+                                                    </div>
+                                                </div>
+                                            </Popup>
+                                        </Polygon>
 
-                                {/* Resizing Handles if Active */}
-                                {isActive && (
-                                    <>
-                                        {/* NW Handle */}
-                                        <Marker
-                                            position={[zone.north, zone.west]}
-                                            icon={HandleIcon}
-                                            draggable={true}
-                                            eventHandlers={{ dragend: (e) => handleResize(zone, 'nw', e.target.getLatLng()) }}
-                                        />
-                                        {/* NE Handle */}
-                                        <Marker
-                                            position={[zone.north, zone.east]}
-                                            icon={HandleIcon}
-                                            draggable={true}
-                                            eventHandlers={{ dragend: (e) => handleResize(zone, 'ne', e.target.getLatLng()) }}
-                                        />
-                                        {/* SW Handle */}
-                                        <Marker
-                                            position={[zone.south, zone.west]}
-                                            icon={HandleIcon}
-                                            draggable={true}
-                                            eventHandlers={{ dragend: (e) => handleResize(zone, 'sw', e.target.getLatLng()) }}
-                                        />
-                                        {/* SE Handle */}
-                                        <Marker
-                                            position={[zone.south, zone.east]}
-                                            icon={HandleIcon}
-                                            draggable={true}
-                                            eventHandlers={{ dragend: (e) => handleResize(zone, 'se', e.target.getLatLng()) }}
-                                        />
-                                    </>
-                                )}
+                                        {/* Editing Handles */}
+                                        {isActive && (
+                                            <>
+                                                {/* Vertex Handles */}
+                                                {shape.map((coord, vIdx) => (
+                                                    <Marker
+                                                        key={`${zone.id}-v-${sIdx}-${vIdx}`}
+                                                        position={coord}
+                                                        icon={HandleIcon}
+                                                        draggable={true}
+                                                        eventHandlers={{
+                                                            dragend: (e) => handleVertexDrag(zone, sIdx, vIdx, e.target.getLatLng())
+                                                        }}
+                                                    />
+                                                ))}
+
+                                                {/* Mid-Point Edge Handles (more side to adjust) */}
+                                                {shape.map((coord, vIdx) => {
+                                                    const nextCoord = shape[(vIdx + 1) % shape.length];
+                                                    const midPoint: [number, number] = [
+                                                        (coord[0] + nextCoord[0]) / 2,
+                                                        (coord[1] + nextCoord[1]) / 2
+                                                    ];
+                                                    return (
+                                                        <Marker
+                                                            key={`${zone.id}-m-${sIdx}-${vIdx}`}
+                                                            position={midPoint}
+                                                            icon={new (window as any).L.DivIcon({
+                                                                className: 'mid-handle',
+                                                                html: "<div style='background-color: white; border: 1px solid #3b82f6; width: 8px; height: 8px; border-radius: 50%; opacity: 0.6;'></div>",
+                                                                iconSize: [8, 8],
+                                                                iconAnchor: [4, 4]
+                                                            })}
+                                                            draggable={true}
+                                                            eventHandlers={{
+                                                                dragend: (e) => handleMidPointDrag(zone, sIdx, vIdx + 1, e.target.getLatLng())
+                                                            }}
+                                                        />
+                                                    );
+                                                })}
+                                            </>
+                                        )}
+                                    </div>
+                                ))}
                             </div>
                         );
                     })}

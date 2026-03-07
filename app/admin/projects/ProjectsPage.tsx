@@ -1,6 +1,6 @@
 "use client";
 
-import { ProjectsProvider } from "./providers";
+import { ProjectsProvider, Project } from "./providers/ProjectsProvider";
 import {
     ProjectsCards,
     ProjectsFilters,
@@ -9,8 +9,9 @@ import {
 } from "./components";
 import { Home, FolderKanban } from "lucide-react";
 
+
 interface ProjectsPageProps {
-    initialData: any[];
+    initialData: Project[];
 }
 
 export function ProjectsPage({ initialData }: ProjectsPageProps) {

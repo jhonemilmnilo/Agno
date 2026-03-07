@@ -902,7 +902,23 @@ export async function updateResident(id: string, formData: FormData) {
     try {
         const imageUrl = await processImageUpload(formData);
 
-        const dataToUpdate: any = {
+        const dataToUpdate: {
+            firstName: string;
+            lastName: string;
+            middleName: string | null;
+            dateOfBirth: Date;
+            gender: string;
+            civilStatus: string;
+            bloodType: string | null;
+            contactNumber: string | null;
+            email: string | null;
+            barangay: string;
+            address: string;
+            occupation: string | null;
+            emergencyContactName: string | null;
+            emergencyContactNumber: string | null;
+            imageUrl?: string | null;
+        } = {
             firstName: formData.get("firstName") as string,
             lastName: formData.get("lastName") as string,
             middleName: formData.get("middleName") as string || null,
@@ -956,14 +972,23 @@ export async function deleteResident(id: string) {
 
 export async function getDisasterZones() {
     try {
-        const zoneDelegate = (prisma as any).disasterZone;
+        const zoneDelegate = prisma.disasterZone;
         if (!zoneDelegate) {
             console.warn("disasterZone delegate missing on prisma instance");
             return { success: false, error: "Database model not recognized yet." };
         }
-        const zones = await zoneDelegate.findMany({
+        const rawZones = await zoneDelegate.findMany({
             orderBy: { createdAt: "desc" }
         });
+
+        // Ensure shapes are always parsed correctly
+        const zones = rawZones.map((z) => ({
+            ...z,
+            shapes: typeof z.shapes === 'string'
+                ? JSON.parse(z.shapes)
+                : (z.shapes || [])
+        }));
+
         return { success: true, zones };
     } catch (error) {
         console.error("Failed to fetch disaster zones:", error);
@@ -976,13 +1001,10 @@ export async function addDisasterZone(data: {
     typeColor: string;
     riskLevel: string;
     riskColor: string;
-    north: number;
-    south: number;
-    east: number;
-    west: number;
+    shapes: [number, number][][];
 }) {
     try {
-        const zoneDelegate = (prisma as any).disasterZone;
+        const zoneDelegate = prisma.disasterZone;
         if (!zoneDelegate) throw new Error("disasterZone model not found");
 
         const zone = await zoneDelegate.create({
@@ -991,10 +1013,7 @@ export async function addDisasterZone(data: {
                 typeColor: data.typeColor,
                 riskLevel: data.riskLevel,
                 riskColor: data.riskColor,
-                north: data.north,
-                south: data.south,
-                east: data.east,
-                west: data.west,
+                shapes: data.shapes as any,
             }
         });
 
@@ -1007,31 +1026,32 @@ export async function addDisasterZone(data: {
 }
 
 export async function updateDisasterZone(id: string, data: {
-    type: string;
-    typeColor: string;
-    riskLevel: string;
-    riskColor: string;
-    north: number;
-    south: number;
-    east: number;
-    west: number;
+    type?: string;
+    typeColor?: string;
+    riskLevel?: string;
+    riskColor?: string;
+    shapes?: [number, number][][];
 }) {
     try {
-        const zoneDelegate = (prisma as any).disasterZone;
+        const zoneDelegate = prisma.disasterZone;
         if (!zoneDelegate) throw new Error("disasterZone model not found");
+
+        const updateData: {
+            type?: string;
+            typeColor?: string;
+            riskLevel?: string;
+            riskColor?: string;
+            shapes?: any;
+        } = {};
+        if (data.type) updateData.type = data.type;
+        if (data.typeColor) updateData.typeColor = data.typeColor;
+        if (data.riskLevel) updateData.riskLevel = data.riskLevel;
+        if (data.riskColor) updateData.riskColor = data.riskColor;
+        if (data.shapes) updateData.shapes = data.shapes;
 
         const zone = await zoneDelegate.update({
             where: { id },
-            data: {
-                type: data.type,
-                typeColor: data.typeColor,
-                riskLevel: data.riskLevel,
-                riskColor: data.riskColor,
-                north: data.north,
-                south: data.south,
-                east: data.east,
-                west: data.west,
-            }
+            data: updateData
         });
 
         revalidatePath("/admin/disasters");
@@ -1044,7 +1064,7 @@ export async function updateDisasterZone(id: string, data: {
 
 export async function deleteDisasterZone(id: string) {
     try {
-        const zoneDelegate = (prisma as any).disasterZone;
+        const zoneDelegate = prisma.disasterZone;
         if (!zoneDelegate) throw new Error("disasterZone model not found");
 
         await zoneDelegate.delete({

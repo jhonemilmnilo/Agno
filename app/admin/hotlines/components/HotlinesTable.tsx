@@ -1,6 +1,6 @@
 "use client";
 
-import { useHotlines } from "../providers/HotlinesProvider";
+import { useHotlines, Hotline } from "../providers/HotlinesProvider";
 import { deleteHotline, toggleHotlineStatus } from "@/app/admin/actions";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Button } from "@/components/ui/button";
@@ -21,7 +21,7 @@ export function HotlinesTable() {
         return matchesSearch && matchesCategory;
     }).sort((a, b) => a.order - b.order);
 
-    const handleEdit = (item: any) => {
+    const handleEdit = (item: Hotline) => {
         setEditingData(item);
         setIsAddModalOpen(true);
     };
@@ -32,7 +32,7 @@ export function HotlinesTable() {
         try {
             await deleteHotline(id);
             toast.success("Hotline entry deleted successfully!");
-        } catch (error) {
+        } catch {
             toast.error("Failed to delete hotline element.");
         } finally {
             setDeletingId(null);
@@ -44,7 +44,7 @@ export function HotlinesTable() {
         try {
             await toggleHotlineStatus(id, !currentStatus);
             toast.success(`Hotline ${!currentStatus ? 'published' : 'hidden'} successfully!`);
-        } catch (error) {
+        } catch {
             toast.error("Failed to update status.");
         } finally {
             setTogglingId(null);

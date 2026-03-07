@@ -1,6 +1,6 @@
 "use client";
 
-import { OfficialsProvider } from "./providers";
+import { OfficialsProvider, Official } from "./providers/OfficialsProvider";
 import {
     OfficialsCards,
     OfficialsFilters,
@@ -9,8 +9,9 @@ import {
 } from "./components";
 import { Home, Users } from "lucide-react";
 
+
 interface OfficialsPageProps {
-    initialData: any[];
+    initialData: Official[];
 }
 
 export function OfficialsPage({ initialData }: OfficialsPageProps) {

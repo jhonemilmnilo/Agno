@@ -25,12 +25,11 @@ export function AddTourismModal() {
     const fileInputRef = useRef<HTMLInputElement>(null);
 
     useEffect(() => {
-        if (editingData?.imageUrl) {
-            setImagePreview(editingData.imageUrl);
-        } else {
-            setImagePreview(null);
+        const url = editingData?.imageUrl || null;
+        if (imagePreview !== url) {
+            setImagePreview(url);
         }
-    }, [editingData]);
+    }, [editingData, imagePreview]);
 
     const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const file = e.target.files?.[0];
@@ -84,7 +83,7 @@ export function AddTourismModal() {
                                 <Input
                                     name="name"
                                     required
-                                    defaultValue={editingData?.name}
+                                    defaultValue={editingData?.name || ""}
                                     placeholder="e.g. Umaguit Island Eco-Park"
                                     className="h-12 bg-slate-50 dark:bg-[#1a1f2e] border-slate-200 dark:border-[#2a3040] focus:ring-2 focus:ring-blue-500/20"
                                 />
@@ -110,7 +109,7 @@ export function AddTourismModal() {
                                     </Label>
                                     <Input
                                         name="entranceFee"
-                                        defaultValue={editingData?.entranceFee}
+                                        defaultValue={editingData?.entranceFee || ""}
                                         placeholder="e.g. Free or ₱50.00"
                                         className="h-12 bg-slate-50 dark:bg-[#1a1f2e] border-slate-200 dark:border-[#2a3040]"
                                     />
@@ -123,7 +122,7 @@ export function AddTourismModal() {
                                 </Label>
                                 <Input
                                     name="bestTimeToVisit"
-                                    defaultValue={editingData?.bestTimeToVisit}
+                                    defaultValue={editingData?.bestTimeToVisit || ""}
                                     placeholder="e.g. Summer, Early Morning"
                                     className="h-12 bg-slate-50 dark:bg-[#1a1f2e] border-slate-200 dark:border-[#2a3040]"
                                 />
@@ -133,7 +132,7 @@ export function AddTourismModal() {
                                 <Label className="text-slate-700 dark:text-slate-300 font-bold">Description</Label>
                                 <Textarea
                                     name="description"
-                                    defaultValue={editingData?.description}
+                                    defaultValue={editingData?.description || ""}
                                     placeholder="Tell something amazing about this place..."
                                     className="min-h-[120px] bg-slate-50 dark:bg-[#1a1f2e] border-slate-200 dark:border-[#2a3040] resize-none"
                                 />
@@ -152,7 +151,7 @@ export function AddTourismModal() {
                                 <Input
                                     name="address"
                                     required
-                                    defaultValue={editingData?.address}
+                                    defaultValue={editingData?.address || ""}
                                     placeholder="e.g. Brgy. Sabangan, Agno"
                                     className="h-12 bg-slate-50 dark:bg-[#1a1f2e] border-slate-200 dark:border-[#2a3040]"
                                 />
@@ -165,7 +164,7 @@ export function AddTourismModal() {
                                         name="latitude"
                                         type="number"
                                         step="any"
-                                        defaultValue={editingData?.latitude}
+                                        defaultValue={editingData?.latitude || ""}
                                         placeholder="16.123..."
                                         className="h-12 bg-slate-50 dark:bg-[#1a1f2e] border-slate-200 dark:border-[#2a3040]"
                                     />
@@ -176,7 +175,7 @@ export function AddTourismModal() {
                                         name="longitude"
                                         type="number"
                                         step="any"
-                                        defaultValue={editingData?.longitude}
+                                        defaultValue={editingData?.longitude || ""}
                                         placeholder="119.890..."
                                         className="h-12 bg-slate-50 dark:bg-[#1a1f2e] border-slate-200 dark:border-[#2a3040]"
                                     />
@@ -187,7 +186,7 @@ export function AddTourismModal() {
                                 <Label className="text-slate-700 dark:text-slate-300 font-bold">Google Maps URL</Label>
                                 <Input
                                     name="googleMapsUrl"
-                                    defaultValue={editingData?.googleMapsUrl}
+                                    defaultValue={editingData?.googleMapsUrl || ""}
                                     placeholder="https://goo.gl/maps/..."
                                     className="h-12 bg-slate-50 dark:bg-[#1a1f2e] border-slate-200 dark:border-[#2a3040] focus:ring-2 focus:ring-blue-500/20"
                                 />

@@ -3,7 +3,7 @@
 import { motion } from "framer-motion";
 import { Plus, Home } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { DiningProvider, useDining } from "./providers/DiningProvider";
+import { DiningProvider, useDining, Dining } from "./providers/DiningProvider";
 import { DiningCards } from "./components/cards";
 import { DiningFilters } from "./components/filters";
 import { DiningTable } from "./components/table";
@@ -60,7 +60,7 @@ function DiningDashboard() {
     );
 }
 
-export default function DiningPage({ diningData }: { diningData: any[] }) {
+export default function DiningPage({ diningData }: { diningData: Dining[] }) {
     return (
         <DiningProvider initialData={diningData}>
             <DiningDashboard />

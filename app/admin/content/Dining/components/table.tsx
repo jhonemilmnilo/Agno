@@ -1,9 +1,8 @@
 "use client";
 
-import { useState } from "react";
 import { motion } from "framer-motion";
-import { useDining } from "../providers/DiningProvider";
-import { Store, MapPin, MoreHorizontal, Map as MapIcon, Trash, EyeOff, Eye, Edit } from "lucide-react";
+import { useDining, Dining } from "../providers/DiningProvider";
+import { Store, MapPin, MoreHorizontal, Map as MapIcon, Trash, EyeOff, Eye } from "lucide-react";
 import { deleteDining, toggleDiningStatus } from "@/app/admin/actions";
 import {
     Table as UITable,
@@ -28,7 +27,7 @@ import { formatDate } from "../utils/date_and_time";
 export function DiningTable() {
     const { diningData, searchTerm, setEditingData, setIsAddModalOpen } = useDining();
 
-    const filteredData = diningData.filter((item: any) =>
+    const filteredData = diningData.filter((item: Dining) =>
         item.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
         (item.cuisineType && item.cuisineType.toLowerCase().includes(searchTerm.toLowerCase()))
     );
@@ -57,7 +56,7 @@ export function DiningTable() {
                             </TableCell>
                         </TableRow>
                     ) : (
-                        filteredData.map((item: any, index: number) => (
+                        filteredData.map((item: Dining, index: number) => (
                             <motion.tr
                                 initial={{ opacity: 0, y: 10 }}
                                 animate={{ opacity: 1, y: 0 }}

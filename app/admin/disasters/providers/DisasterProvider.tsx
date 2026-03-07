@@ -1,18 +1,15 @@
 "use client";
 
-import React, { createContext, useContext, useState, useEffect } from "react";
+import React, { createContext, useContext, useState, useEffect, useCallback } from "react";
 import { getDisasterZones } from "../../actions";
 
-interface DisasterZone {
+export interface DisasterZone {
     id: string;
     type: string;
     typeColor: string;
     riskLevel: string;
     riskColor: string;
-    north: number;
-    south: number;
-    east: number;
-    west: number;
+    shapes: [number, number][][];
 }
 
 interface DisasterContextType {
@@ -33,18 +30,18 @@ export function DisasterProvider({ children }: { children: React.ReactNode }) {
     const [isLoading, setIsLoading] = useState(true);
     const [activeZoneId, setActiveZoneId] = useState<string | null>(null);
 
-    const refreshZones = async () => {
+    const refreshZones = useCallback(async () => {
         setIsLoading(true);
         const result = await getDisasterZones();
         if (result.success && result.zones) {
             setZones(result.zones as DisasterZone[]);
         }
         setIsLoading(false);
-    };
+    }, []);
 
     useEffect(() => {
         refreshZones();
-    }, []);
+    }, [refreshZones]);
 
     const addZone = (zone: DisasterZone) => {
         setZones((prev) => [zone, ...prev]);

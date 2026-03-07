@@ -1,6 +1,6 @@
 "use client";
 
-import { useNews } from "../providers/NewsProvider";
+import { useNews, News } from "../providers/NewsProvider";
 import { deleteNews, toggleNewsStatus } from "@/app/admin/actions";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Button } from "@/components/ui/button";
@@ -17,13 +17,13 @@ export function NewsTable() {
     const [deletingId, setDeletingId] = useState<string | null>(null);
     const [togglingId, setTogglingId] = useState<string | null>(null);
 
-    const filteredData = newsData.filter(item => {
+    const filteredData = newsData.filter((item: News) => {
         const matchesSearch = item.title.toLowerCase().includes(searchTerm.toLowerCase());
         const matchesCategory = selectedCategory === "All" || item.category === selectedCategory;
         return matchesSearch && matchesCategory;
     });
 
-    const handleEdit = (item: any) => {
+    const handleEdit = (item: News) => {
         setEditingData(item);
         setIsAddModalOpen(true);
     };
@@ -34,7 +34,7 @@ export function NewsTable() {
         try {
             await deleteNews(id);
             toast.success("News deleted successfully!");
-        } catch (error) {
+        } catch {
             toast.error("Failed to delete news.");
         } finally {
             setDeletingId(null);
@@ -46,7 +46,7 @@ export function NewsTable() {
         try {
             await toggleNewsStatus(id, !currentStatus);
             toast.success(`News ${!currentStatus ? 'published' : 'unpublished'} successfully!`);
-        } catch (error) {
+        } catch {
             toast.error("Failed to update status.");
         } finally {
             setTogglingId(null);

@@ -1,6 +1,6 @@
 "use client";
 
-import { EventsProvider } from "./providers";
+import { EventsProvider, Event } from "./providers/EventsProvider";
 import {
     EventsCards,
     EventsFilters,
@@ -9,8 +9,9 @@ import {
 } from "./components";
 import { Home } from "lucide-react";
 
+
 interface EventsPageProps {
-    initialData: any[];
+    initialData: Event[];
 }
 
 export function EventsPage({ initialData }: EventsPageProps) {

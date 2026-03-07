@@ -2,7 +2,7 @@
 
 import { useResident } from "../providers";
 import { useResidentForm } from "../hooks/useResidentForm";
-import { X, Upload, User, MapPin, Phone, HeartPulse, HardHat } from "lucide-react";
+import { Upload, User, MapPin, Phone, HeartPulse, HardHat } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
@@ -21,13 +21,12 @@ export function AddResidentModal() {
     const barangays = ["Aloleng", "Bangan-Oda", "Baruan", "Boboy", "Cayungnan", "Dangley", "Gayusan", "Macaboboni", "Magsaysay", "Namuac", "Poblacion East", "Poblacion West", "Patar", "Sablig", "San Juan", "Tupa"];
 
     useEffect(() => {
-        if (editingData?.imageUrl) {
-            setPreviewUrl(editingData.imageUrl);
-        } else {
-            setPreviewUrl(null);
+        const url = editingData?.imageUrl || null;
+        if (previewUrl !== url) {
+            setPreviewUrl(url);
         }
         setImageFile(null);
-    }, [editingData, setImageFile, isAddModalOpen]);
+    }, [editingData, setImageFile, isAddModalOpen, previewUrl]);
 
     const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         if (e.target.files && e.target.files[0]) {

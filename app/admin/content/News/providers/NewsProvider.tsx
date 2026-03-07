@@ -2,23 +2,36 @@
 
 import { createContext, useContext, useState, useEffect, ReactNode } from "react";
 
+export interface News {
+    id: string;
+    title: string;
+    content: string;
+    category: string;
+    author: string | null;
+    imageUrl: string | null;
+    publishDate: Date;
+    isPublished: boolean;
+    createdAt: Date;
+    updatedAt: Date;
+}
+
 interface NewsContextType {
-    newsData: any[];
-    setNewsData: (data: any[]) => void;
+    newsData: News[];
+    setNewsData: (data: News[]) => void;
     searchTerm: string;
     setSearchTerm: (term: string) => void;
     isAddModalOpen: boolean;
     setIsAddModalOpen: (open: boolean) => void;
-    editingData: any | null;
-    setEditingData: (data: any | null) => void;
+    editingData: News | null;
+    setEditingData: (data: News | null) => void;
     selectedCategory: string;
     setSelectedCategory: (category: string) => void;
 }
 
 const NewsContext = createContext<NewsContextType | undefined>(undefined);
 
-export function NewsProvider({ children, initialData }: { children: ReactNode; initialData: any[] }) {
-    const [newsData, setNewsData] = useState(initialData);
+export function NewsProvider({ children, initialData }: { children: ReactNode; initialData: News[] }) {
+    const [newsData, setNewsData] = useState<News[]>(initialData);
     const [searchTerm, setSearchTerm] = useState("");
     const [isAddModalOpen, setIsAddModalOpen] = useState(false);
     const [editingData, setEditingData] = useState<any | null>(null);

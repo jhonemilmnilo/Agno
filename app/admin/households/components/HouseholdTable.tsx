@@ -1,11 +1,12 @@
 "use client";
 
 import { useHousehold } from "../providers/HouseholdProvider";
+import { Household } from "../providers/HouseholdProvider";
 import { deleteHousehold } from "../../actions";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { Edit, Trash2, MapPin, Users, Phone, AlertTriangle } from "lucide-react";
+import { Edit, Trash2, MapPin, Users, Phone, AlertTriangle, ShieldCheck } from "lucide-react";
 import { toast } from "sonner";
 import {
     AlertDialog,
@@ -18,7 +19,6 @@ import {
     AlertDialogTitle,
     AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
-import { format } from "date-fns";
 import { useState, useEffect } from "react";
 
 export function HouseholdTable() {
@@ -50,7 +50,9 @@ export function HouseholdTable() {
     const itemsPerPage = 30;
 
     useEffect(() => {
-        setCurrentPage(1);
+        if (currentPage !== 1) {
+            setCurrentPage(1);
+        }
     }, [searchQuery, selectedBarangay, selectedRiskLevel]);
 
     const totalPages = Math.ceil(filteredHouseholds.length / itemsPerPage);
@@ -70,7 +72,7 @@ export function HouseholdTable() {
         }
     };
 
-    const handleEdit = (household: any) => {
+    const handleEdit = (household: Household) => {
         setEditingData(household);
         setIsAddModalOpen(true);
     };
@@ -231,7 +233,3 @@ export function HouseholdTable() {
     );
 }
 
-// Dummy shieldCheck icon since we didn't import it at the top
-function ShieldCheck(props: any) {
-    return <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" {...props}><path d="M20 13c0 5-3.5 7.5-7.66 8.95a1 1 0 0 1-.67-.01C7.5 20.5 4 18 4 13V6a1 1 0 0 1 1-1c2-1 4-3 5.99-5.11a2 2 0 0 1 2.02 0C15 2.09 17 4.09 19 5a1 1 0 0 1 1 1z"></path><path d="m9 12 2 2 4-4"></path></svg>
-}
